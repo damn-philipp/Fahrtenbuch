@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Fahrtenbuch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .km-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .km-display .label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .km-display .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .trip-type {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .trip-type button {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .trip-type button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .start-button {
+            background: #48bb78;
+            color: white;
+        }
+
+        .start-button:active {
+            transform: scale(0.98);
+        }
+
+        .stop-button {
+            background: #f56565;
+            color: white;
+        }
+
+        .stop-button:active {
+            transform: scale(0.98);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .summary-item .label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .summary-item .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .trip-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .trip-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .trip-item.private {
+            border-left-color: #ed8936;
+        }
+
+        .trip-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .trip-type-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .trip-type-badge.private {
+            background: #ed8936;
+        }
+
+        .trip-distance {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .trip-details {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .delete-button {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .active-trip {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .active-trip-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Fahrtenbuch</h1>
+        </div>
+
+        <!-- Setup Card (nur beim ersten Mal) -->
+        <div id="setupCard" class="card">
+            <h2>Initialer KM-Stand</h2>
+            <div class="input-group">
+                <label>Aktueller Kilometerstand</label>
+                <input type="number" id="initialKm" placeholder="z.B. 45000" inputmode="numeric">
+            </div>
+            <button class="action-button start-button" onclick="saveInitialKm()">Speichern</button>
+        </div>
+
+        <!-- Main App Card -->
+        <div id="mainCard" class="card hidden">
+            <div class="km-display">
+                <div class="label">Aktueller KM-Stand</div>
+                <div class="value" id="currentKm">0</div>
+            </div>
+
+            <!-- Active Trip Display -->
+            <div id="activeTripDisplay" class="active-trip hidden">
+                <div class="active-trip-info">
+                    <div>
+                        <strong>Fahrt läuft...</strong>
+                        <div id="activeTripType" style="font-size: 14px; color: #666;"></div>
+                        <div id="activeTripStart" style="font-size: 14px; color: #666;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Trip Section -->
+            <div id="startSection">
+                <h2>Neue Fahrt</h2>
+                <div class="trip-type">
+                    <button id="businessBtn" class="active" onclick="selectTripType('business')">Geschäftlich</button>
+                    <button id="privateBtn" onclick="selectTripType('private')">Privat</button>
+                </div>
+                <button class="action-button start-button" onclick="startTrip()">Fahrt starten</button>
+            </div>
+
+            <!-- End Trip Section -->
+            <div id="endSection" class="hidden">
+                <h2>Fahrt beenden</h2>
+                <div class="input-group">
+                    <label>KM-Stand am Ende</label>
+                    <input type="number" id="endKm" placeholder="z.B. 45120" inputmode="numeric">
+                </div>
+                <button class="action-button stop-button" onclick="endTrip()">Fahrt beenden</button>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div id="summaryCard" class="card hidden">
+            <h2>Übersicht</h2>
+            <div class="summary">
+                <div class="summary-item">
+                    <div class="label">Geschäftlich</div>
+                    <div class="value" id="businessKm">0 km</div>
+                </div>
+                <div class="summary-item">
+                    <div class="label">Privat</div>
+                    <div class="value" id="privateKm">0 km</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trip List Card -->
+        <div id="tripListCard" class="card hidden">
+            <h2>Fahrten</h2>
+            <div class="trip-list" id="tripList">
+                <div class="empty-state">Noch keine Fahrten aufgezeichnet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentKmStand = 0;
+        let activeTrip = null;
+        let trips = [];
+        let selectedType = 'business';
+
+        // Initialize App
+        function initApp() {
+            // Load data from localStorage
+            const savedKm = localStorage.getItem('currentKm');
+            const savedTrips = localStorage.getItem('trips');
+            const savedActiveTrip = localStorage.getItem('activeTrip');
+
+            if (savedKm) {
+                currentKmStand = parseInt(savedKm);
+                document.getElementById('setupCard').classList.add('hidden');
+                document.getElementById('mainCard').classList.remove('hidden');
+                document.getElementById('summaryCard').classList.remove('hidden');
+                document.getElementById('tripListCard').classList.remove('hidden');
+                updateKmDisplay();
+            }
+
+            if (savedTrips) {
+                trips = JSON.parse(savedTrips);
+                renderTripList();
+                updateSummary();
+            }
+
+            if (savedActiveTrip) {
+                activeTrip = JSON.parse(savedActiveTrip);
+                showActiveTripState();
+            }
+        }
+
+        function saveInitialKm() {
+            const input = document.getElementById('initialKm');
+            const km = parseInt(input.value);
+
+            if (isNaN(km) || km < 0) {
+                alert('Bitte gib einen gültigen Kilometerstand ein.');
+                return;
+            }
+
+            currentKmStand = km;
+            localStorage.setItem('currentKm', km);
+
+            document.getElementById('setupCard').classList.add('hidden');
+            document.getElementById('mainCard').classList.remove('hidden');
+            document.getElementById('summaryCard').classList.remove('hidden');
+            document.getElementById('tripListCard').classList.remove('hidden');
+
+            updateKmDisplay();
+        }
+
+        function updateKmDisplay() {
+            document.getElementById('currentKm').textContent = currentKmStand.toLocaleString('de-DE') + ' km';
+        }
+
+        function selectTripType(type) {
+            selectedType = type;
+            document.getElementById('businessBtn').classList.remove('active');
+            document.getElementById('privateBtn').classList.remove('active');
+
+            if (type === 'business') {
+                document.getElementById('businessBtn').classList.add('active');
+            } else {
+                document.getElementById('privateBtn').classList.add('active');
+            }
+        }
+
+        function startTrip() {
+            activeTrip = {
+                type: selectedType,
+                startKm: currentKmStand,
+                startTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('activeTrip', JSON.stringify(activeTrip));
+            showActiveTripState();
+        }
+
+        function showActiveTripState() {
+            document.getElementById('startSection').classList.add('hidden');
+            document.getElementById('endSection').classList.remove('hidden');
+            document.getElementById('activeTripDisplay').classList.remove('hidden');
+
+            const typeText = activeTrip.type === 'business' ? 'Geschäftlich' : 'Privat';
+            document.getElementById('activeTripType').textContent = typeText;
+            document.getElementById('activeTripStart').textContent =
+                'Start: ' + activeTrip.startKm.toLocaleString('de-DE') + ' km • ' +
+                new Date(activeTrip.startTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function endTrip() {
+            const input = document.getElementById('endKm');
+            const endKm = parseInt(input.value);
+
+            if (isNaN(endKm) || endKm < 0) {
+                alert('Bitte gib einen gültigen Kilometerstand ein.');
+                return;
+            }
+
+            if (endKm <= activeTrip.startKm) {
+                alert('Der End-Kilometerstand muss höher sein als der Start-Kilometerstand.');
+                return;
+            }
+
+            const distance = endKm - activeTrip.startKm;
+
+            const trip = {
+                id: Date.now(),
+                type: activeTrip.type,
+                startKm: activeTrip.startKm,
+                endKm: endKm,
+                distance: distance,
+                startTime: activeTrip.startTime,
+                endTime: new Date().toISOString()
+            };
+
+            trips.unshift(trip);
+            currentKmStand = endKm;
+
+            // Save to localStorage
+            localStorage.setItem('trips', JSON.stringify(trips));
+            localStorage.setItem('currentKm', currentKmStand);
+            localStorage.removeItem('activeTrip');
+
+            // Reset UI
+            activeTrip = null;
+            input.value = '';
+            document.getElementById('startSection').classList.remove('hidden');
+            document.getElementById('endSection').classList.add('hidden');
+            document.getElementById('activeTripDisplay').classList.add('hidden');
+
+            updateKmDisplay();
+            renderTripList();
+            updateSummary();
+        }
+
+        function renderTripList() {
+            const listElement = document.getElementById('tripList');
+
+            if (trips.length === 0) {
+                listElement.innerHTML = '<div class="empty-state">Noch keine Fahrten aufgezeichnet</div>';
+                return;
+            }
+
+            listElement.innerHTML = trips.map(trip => {
+                const typeClass = trip.type === 'private' ? 'private' : '';
+                const typeText = trip.type === 'business' ? 'Geschäftlich' : 'Privat';
+                const date = new Date(trip.startTime).toLocaleDateString('de-DE');
+                const startTime = new Date(trip.startTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(trip.endTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <div class="trip-item ${typeClass}">
+                        <div class="trip-item-header">
+                            <span class="trip-type-badge ${typeClass}">${typeText}</span>
+                            <span class="trip-distance">${trip.distance} km</span>
+                            <button class="delete-button" onclick="deleteTrip(${trip.id})">Löschen</button>
+                        </div>
+                        <div class="trip-details">
+                            ${date} • ${startTime} - ${endTime}<br>
+                            ${trip.startKm.toLocaleString('de-DE')} km → ${trip.endKm.toLocaleString('de-DE')} km
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateSummary() {
+            const businessTotal = trips
+                .filter(t => t.type === 'business')
+                .reduce((sum, t) => sum + t.distance, 0);
+
+            const privateTotal = trips
+                .filter(t => t.type === 'private')
+                .reduce((sum, t) => sum + t.distance, 0);
+
+            document.getElementById('businessKm').textContent = businessTotal.toLocaleString('de-DE') + ' km';
+            document.getElementById('privateKm').textContent = privateTotal.toLocaleString('de-DE') + ' km';
+        }
+
+        function deleteTrip(id) {
+            if (confirm('Fahrt wirklich löschen?')) {
+                trips = trips.filter(t => t.id !== id);
+                localStorage.setItem('trips', JSON.stringify(trips));
+                renderTripList();
+                updateSummary();
+            }
+        }
+
+        // Initialize on load
+        initApp();
+    </script>
+</body>
+
+</html>
