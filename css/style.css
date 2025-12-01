@@ -1,0 +1,450 @@
+/* ========================================
+   FARB-KONFIGURATION
+   Hier kannst du die Farben anpassen
+   ======================================== */
+:root {
+    /* Hauptfarben */
+    --primary-color: #2563eb;
+    --primary-dark: #1e40af;
+    --secondary-color: #7c3aed;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+
+    /* Farbvorschläge:
+    
+    Grün/Türkis:
+    --primary-color: #059669;
+    --primary-dark: #047857;
+    --secondary-color: #06b6d4;
+    
+    Orange/Rot:
+    --primary-color: #ea580c;
+    --primary-dark: #c2410c;
+    --secondary-color: #dc2626;
+    
+    Lila/Pink:
+    --primary-color: #9333ea;
+    --primary-dark: #7e22ce;
+    --secondary-color: #ec4899;
+    */
+}
+
+/* ========================================
+   GRUNDLEGENDES LAYOUT
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    min-height: 100vh;
+    padding: 20px;
+    padding-bottom: 100px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 32px;
+    flex: 1;
+}
+
+.settings-icon,
+.back-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.settings-icon:active,
+.back-button:active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   CARDS
+   ======================================== */
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* ========================================
+   KM ANZEIGE
+   ======================================== */
+.km-display {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.km-display .label {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.km-display .value {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* ========================================
+   FORMULARE
+   ======================================== */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.trip-type {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.trip-type button {
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.trip-type button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.action-button {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+}
+
+.start-button {
+    background: var(--success-color);
+    color: white;
+}
+
+.stop-button {
+    background: var(--danger-color);
+    color: white;
+}
+
+.export-button {
+    background: var(--primary-color);
+    color: white;
+}
+
+.button-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.action-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+.edit-button,
+.delete-button {
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.edit-button {
+    background: var(--primary-color);
+}
+
+.delete-button {
+    background: var(--danger-color);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* ========================================
+   ZUSAMMENFASSUNG
+   ======================================== */
+.summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 12px;
+}
+
+.summary-item .label {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.summary-item .value {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* ========================================
+   FAHRTEN-LISTE
+   ======================================== */
+.trip-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.trip-item {
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.trip-item.private {
+    border-left-color: var(--accent-color);
+}
+
+.trip-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.trip-type-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.trip-type-badge.private {
+    background: var(--accent-color);
+}
+
+.trip-distance {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.trip-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.trip-details {
+    font-size: 14px;
+    color: #666;
+}
+
+.trip-note {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #333;
+    font-style: italic;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+/* ========================================
+   AKTIVE FAHRT
+   ======================================== */
+.active-trip {
+    background: #fef3c7;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--warning-color);
+}
+
+.active-trip-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+/* ========================================
+   EINSTELLUNGEN
+   ======================================== */
+.settings-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 18px;
+}
+
+.danger-zone {
+    background: #fee;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid var(--danger-color);
+}
+
+/* ========================================
+   UTILITY KLASSEN
+   ======================================== */
+.hidden {
+    display: none;
+}
