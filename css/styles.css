@@ -4,8 +4,8 @@
    ======================================== */
 :root {
     /* Hauptfarben */
-    --primary-color: #c0c2c9;
-    --primary-dark: #858996;
+    --primary-color: #2874b2;
+    --primary-dark: #c0c2c9;
     --secondary-color: #49678d;
     --accent-color: #f59e0b;
     --success-color: #10b981;
@@ -245,6 +245,20 @@ h2 {
 .button-group {
     display: flex;
     gap: 10px;
+}
+
+.trip-type button#businessBtn.active,
+.trip-type button#editBusinessBtn.active {
+    background: #e20074;
+    color: #fff;
+    border-color: #e20074;
+}
+
+.trip-type button#privateBtn.active,
+.trip-type button#editPrivateBtn.active {
+    background: #1351d8;
+    color: #fff;
+    border-color: #1351d8;
 }
 
 /* ========================================
