@@ -4,9 +4,9 @@
    ======================================== */
 :root {
     /* Hauptfarben */
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary-color: #7c3aed;
+    --primary-color: #c0c2c9;
+    --primary-dark: #858996;
+    --secondary-color: #49678d;
     --accent-color: #f59e0b;
     --success-color: #10b981;
     --danger-color: #ef4444;
@@ -289,11 +289,11 @@ h2 {
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 10px;
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid #e20074;
 }
 
 .trip-item.private {
-    border-left-color: var(--accent-color);
+    border-left-color: #1351d8;
 }
 
 .trip-item-header {

@@ -107,8 +107,8 @@ class UI {
                         <span class="trip-type-badge ${typeClass}">${typeText}</span>
                         <span class="trip-distance">${trip.distance} km</span>
                         <div class="trip-buttons">
-                            <button class="edit-button" data-trip-id="${trip.id}">✏️</button>
-                            <button class="delete-button" data-trip-id="${trip.id}">🗑️</button>
+                            <button class="edit-button" data-trip-id="${trip.id}">Bearbeiten</button>
+                            <button class="delete-button" data-trip-id="${trip.id}">Löschen</button>
                         </div>
                     </div>
                     <div class="trip-details">
