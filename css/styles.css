@@ -15,7 +15,7 @@
     --private-color: #1351d8;
     --business-color: #e20074;
 
-    --corner-radius: 10px;
+    --corner-radius: 12px;
 
     /* Farbvorschläge:
     
@@ -302,70 +302,89 @@ h2 {
 .trip-list {
     max-height: 400px;
     overflow-y: auto;
+    padding-right: 4px;
 }
 
+/* Item */
 .trip-item {
-    background: #f7fafc;
-    padding: 16px;
-    border-radius: var(--corner-radius);
-    margin-bottom: 16px;
-    border-left: 4px solid var(--business-color);
+    background: #ffffff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    border-left: 5px solid var(--business-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .trip-item.private {
     border-left-color: var(--private-color);
 }
 
+/* Header */
 .trip-item-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 }
 
+/* Badge */
 .trip-type-badge {
     background: var(--business-color);
     color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .trip-type-badge.private {
     background: var(--private-color);
 }
 
+/* Entfernung */
 .trip-distance {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
+    font-size: 18px;
+    font-weight: 700;
+    margin-left: auto;
 }
 
+/* Buttons kompakter und dezenter */
 .trip-buttons {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    margin-left: auto;
 }
 
+.trip-buttons button {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+/* Details */
 .trip-details {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
+    margin-top: 6px;
+    line-height: 1.3;
 }
 
+/* Notiz */
 .trip-note {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #333;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #444;
     font-style: italic;
 }
 
+/* Empty */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
-    color: #999;
+    color: #aaa;
+    font-size: 14px;
 }
+
 
 /* ========================================
    AKTIVE FAHRT
