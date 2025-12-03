@@ -1,7 +1,6 @@
 /**
  * APP.JS
- * Hauptanwendung - verbindet alle Komponenten (ähnlich wie Program.cs / Startup.cs in C#)
- * Zuständig für: Event-Handling, Koordination zwischen TripManager und UI
+ * Hauptanwendung - verbindet alle Komponenten
  */
 
 // Globale Instanz des TripManagers
@@ -67,10 +66,16 @@ function attachEventListeners() {
     document.getElementById('clearTripsBtn').addEventListener('click', handleClearAllTrips);
     document.getElementById('resetAppBtn').addEventListener('click', handleResetApp);
 
-    // Edit Modal
+    // Edit Modal - Allgemeine Buttons
     document.getElementById('closeEditModalBtn').addEventListener('click', () => UI.closeEditModal());
     document.getElementById('cancelEditBtn').addEventListener('click', () => UI.closeEditModal());
     document.getElementById('saveEditBtn').addEventListener('click', handleSaveEdit);
+
+    // NEU: Edit Modal - Löschen Button (Der neue rote Button im Modal)
+    const modalDeleteBtn = document.getElementById('modalDeleteBtn');
+    if (modalDeleteBtn) {
+        modalDeleteBtn.addEventListener('click', handleModalDeleteTrip);
+    }
 
     // Edit Modal Trip Type
     document.getElementById('editBusinessBtn').addEventListener('click', () => {
@@ -82,14 +87,12 @@ function attachEventListeners() {
         document.getElementById('editBusinessBtn').classList.remove('active');
     });
 
-    // Trip List (Event Delegation für dynamische Buttons)
+    // Trip List (Event Delegation)
+    // GEÄNDERT: Hört nur noch auf den 'edit-button', da der 'delete-button' aus der Liste entfernt wurde
     document.getElementById('tripList').addEventListener('click', (e) => {
         if (e.target.classList.contains('edit-button')) {
             const tripId = parseInt(e.target.dataset.tripId);
             handleEditTrip(tripId);
-        } else if (e.target.classList.contains('delete-button')) {
-            const tripId = parseInt(e.target.dataset.tripId);
-            handleDeleteTrip(tripId);
         }
     });
 }
@@ -165,11 +168,23 @@ function handleSaveEdit() {
     }
 }
 
-function handleDeleteTrip(tripId) {
-    if (UI.confirm('Fahrt wirklich löschen?')) {
-        tripManager.deleteTrip(tripId);
-        UI.renderTripList(tripManager.trips);
-        UI.updateSummary(tripManager.calculateSummary());
+// NEU: Handler für das Löschen aus dem Modal heraus
+function handleModalDeleteTrip() {
+    // ID holen, die wir in ui.js an den Button gehängt haben
+    const btn = document.getElementById('modalDeleteBtn');
+    const tripId = parseInt(btn.dataset.tripId);
+
+    if (UI.confirm('Möchten Sie diese Fahrt wirklich unwiderruflich löschen?')) {
+        const success = tripManager.deleteTrip(tripId);
+
+        if (success) {
+            UI.renderTripList(tripManager.trips);
+            UI.updateSummary(tripManager.calculateSummary());
+            UI.closeEditModal(); // WICHTIG: Modal schließen
+            editingTripId = null;
+        } else {
+            UI.alert('Fehler beim Löschen der Fahrt.');
+        }
     }
 }
 

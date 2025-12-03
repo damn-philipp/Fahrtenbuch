@@ -319,17 +319,18 @@ h2 {
     border-left-color: var(--private-color);
 }
 
-/* Header - NEUE IMPLEMENTIERUNG MIT RESPONSIVEM CSS GRID */
+/* Header - Optimiert für Single-Button Layout */
 .trip-item-header {
     display: grid;
-    /* Spaltendefinition:
-       1. Spalte: Linke Info-Gruppe (nimmt den restlichen Platz ein: 1fr)
-       2. Spalte: Distanz (Maximal 80px oder so breit wie nötig: minmax(auto, 80px))
-       3. Spalte: Buttons (nimmt nur Platz für den Inhalt ein: auto)
+    /* 
+       1. Spalte (Info): Nimmt allen freien Platz (1fr)
+       2. Spalte (Distanz): Passt sich Inhalt an, klebt aber nicht am Rand
+       3. Spalte (Button): Nur so breit wie der "Bearbeiten" Button
     */
-    grid-template-columns: 1fr minmax(auto, 80px) auto;
+    grid-template-columns: 1fr auto auto;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    /* Etwas mehr Luft zwischen den Elementen */
 }
 
 /* NEU: Wrapper für Badge und Details (Spalte 1) */

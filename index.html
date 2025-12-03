@@ -176,11 +176,17 @@
                 <label>Notiz (optional)</label>
                 <textarea id="editTripNote" placeholder="z.B. Kundenbesuch, Einkauf..."></textarea>
             </div>
-
-            <div class="button-group">
+            <!-- Button Gruppe für Abbrechen/Speichern -->
+            <div class="button-group" style="margin-top: 20px;">
                 <button class="action-button button-secondary" id="cancelEditBtn">Abbrechen</button>
                 <button class="action-button export-button" id="saveEditBtn">Speichern</button>
             </div>
+
+            <!-- Neuer Löschen-Button (Darunter, volle Breite, rot) -->
+            <button class="action-button stop-button" id="modalDeleteBtn"
+                style="margin-top: 15px; background-color: var(--danger-color);">
+                Fahrt löschen
+            </button>
         </div>
     </div>
 

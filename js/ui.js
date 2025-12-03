@@ -101,12 +101,11 @@ class UI {
             const endTime = new Date(trip.endTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
             const noteHtml = trip.note ? `<div class="trip-note">📝 ${trip.note}</div>` : '';
 
-            // WICHTIGE ANPASSUNG DER HTML-STRUKTUR FÜR CSS GRID
             return `
                 <div class="trip-item ${typeClass}">
                     <div class="trip-item-header">
                         
-                        <!-- NEUER WRAPPER FÜR SPALTE 1 -->
+                        <!-- Wrapper für Spalte 1 -->
                         <div class="trip-info">
                             <span class="trip-type-badge ${typeClass}">${typeText}</span>
                             <div class="trip-details">
@@ -115,17 +114,14 @@ class UI {
                             </div>
                         </div>
                         
-                        <!-- Distanz (SPALTE 2) -->
+                        <!-- Distanz (Spalte 2) -->
                         <span class="trip-distance">${trip.distance} km</span>
                         
-                        <!-- Buttons (SPALTE 3) -->
+                        <!-- Button (Spalte 3) - JETZT NUR NOCH BEARBEITEN -->
                         <div class="trip-buttons">
                             <button class="edit-button" data-trip-id="${trip.id}">Bearbeiten</button>
-                            <button class="delete-button" data-trip-id="${trip.id}">Löschen</button>
                         </div>
                     </div>
-                    
-                    <!-- Notiz bleibt außerhalb des Headers und nimmt volle Breite ein (wenn vorhanden) -->
                     ${noteHtml}
                 </div>
             `;
@@ -171,6 +167,10 @@ class UI {
         document.getElementById('editStartKm').value = trip.startKm;
         document.getElementById('editEndKm').value = trip.endKm;
         document.getElementById('editTripNote').value = trip.note || '';
+
+        // WICHTIG: Wir speichern die ID am Löschen-Button im Modal
+        const deleteBtn = document.getElementById('modalDeleteBtn');
+        if (deleteBtn) deleteBtn.dataset.tripId = trip.id;
 
         const businessBtn = document.getElementById('editBusinessBtn');
         const privateBtn = document.getElementById('editPrivateBtn');
