@@ -319,19 +319,17 @@ h2 {
     border-left-color: var(--private-color);
 }
 
-/* Header - NEUE IMPLEMENTIERUNG MIT CSS GRID */
+/* Header - NEUE IMPLEMENTIERUNG MIT RESPONSIVEM CSS GRID */
 .trip-item-header {
     display: grid;
     /* Spaltendefinition:
-       1. Spalte: Linke Info-Gruppe (so breit wie nötig)
-       2. Spalte: Distanz (feste Breite von 100px)
-       3. Spalte: Buttons (nimmt den restlichen Platz ein)
+       1. Spalte: Linke Info-Gruppe (nimmt den restlichen Platz ein: 1fr)
+       2. Spalte: Distanz (Maximal 80px oder so breit wie nötig: minmax(auto, 80px))
+       3. Spalte: Buttons (nimmt nur Platz für den Inhalt ein: auto)
     */
-    grid-template-columns: auto 100px 1fr;
+    grid-template-columns: 1fr minmax(auto, 80px) auto;
     align-items: center;
-    /* Vertikale Zentrierung der 3 Hauptelemente */
     gap: 10px;
-    /* Abstand zwischen den Spalten */
 }
 
 /* NEU: Wrapper für Badge und Details (Spalte 1) */
@@ -362,13 +360,15 @@ h2 {
     background: var(--private-color);
 }
 
-/* Entfernung - Jetzt in Spalte 2 */
+/* Entfernung - Muss jetzt innerhalb seiner Zelle zentriert oder links ausgerichtet werden, 
+   da Spalte 1 (links) jetzt den meisten Platz bekommt. */
 .trip-distance {
     font-size: 18px;
     font-weight: 700;
-    text-align: right;
-    /* Ausrichtung zur roten Linie. 10px ist der Abstand zum rechten Rand der Zelle. */
-    padding-right: 10px;
+    /* Ändere Ausrichtung von 'right' auf 'center', damit es in der Mitte der Spalte steht. */
+    text-align: center;
+    /* Entferne padding-right, es ist unnötig */
+    padding-right: 0;
 }
 
 /* Buttons kompakter und dezenter - Jetzt in Spalte 3 */
