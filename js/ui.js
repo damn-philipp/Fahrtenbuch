@@ -82,9 +82,9 @@ class UI {
     }
 
     /**
-     * Rendert die Fahrten-Liste
-     * @param {Array} trips
-     */
+         * Rendert die Fahrten-Liste
+         * @param {Array} trips
+         */
     static renderTripList(trips) {
         const listElement = document.getElementById('tripList');
 
@@ -101,20 +101,31 @@ class UI {
             const endTime = new Date(trip.endTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
             const noteHtml = trip.note ? `<div class="trip-note">📝 ${trip.note}</div>` : '';
 
+            // WICHTIGE ANPASSUNG DER HTML-STRUKTUR FÜR CSS GRID
             return `
                 <div class="trip-item ${typeClass}">
                     <div class="trip-item-header">
-                        <span class="trip-type-badge ${typeClass}">${typeText}</span>
+                        
+                        <!-- NEUER WRAPPER FÜR SPALTE 1 -->
+                        <div class="trip-info">
+                            <span class="trip-type-badge ${typeClass}">${typeText}</span>
+                            <div class="trip-details">
+                                ${date} • ${startTime} - ${endTime}<br>
+                                ${trip.startKm.toLocaleString('de-DE')} km → ${trip.endKm.toLocaleString('de-DE')} km
+                            </div>
+                        </div>
+                        
+                        <!-- Distanz (SPALTE 2) -->
                         <span class="trip-distance">${trip.distance} km</span>
+                        
+                        <!-- Buttons (SPALTE 3) -->
                         <div class="trip-buttons">
                             <button class="edit-button" data-trip-id="${trip.id}">Bearbeiten</button>
                             <button class="delete-button" data-trip-id="${trip.id}">Löschen</button>
                         </div>
                     </div>
-                    <div class="trip-details">
-                        ${date} • ${startTime} - ${endTime}<br>
-                        ${trip.startKm.toLocaleString('de-DE')} km → ${trip.endKm.toLocaleString('de-DE')} km
-                    </div>
+                    
+                    <!-- Notiz bleibt außerhalb des Headers und nimmt volle Breite ein (wenn vorhanden) -->
                     ${noteHtml}
                 </div>
             `;

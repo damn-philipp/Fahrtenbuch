@@ -297,19 +297,19 @@ h2 {
 }
 
 /* ========================================
-   FAHRTEN-LISTE
+   FAHRTEN-LISTE - KORRIGIERTES GRID-LAYOUT
    ======================================== */
 .trip-list {
-    max-height: 400px;
+    max-height: fit-content;
     overflow-y: auto;
     padding-right: 4px;
 }
 
 /* Item */
 .trip-item {
-    background: #ffffff;
+    background: #f7fafc;
     padding: 14px 16px;
-    border-radius: 14px;
+    border-radius: var(--corner-radius);
     margin-bottom: 14px;
     border-left: 5px solid var(--business-color);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -319,15 +319,36 @@ h2 {
     border-left-color: var(--private-color);
 }
 
-/* Header */
+/* Header - NEUE IMPLEMENTIERUNG MIT CSS GRID */
 .trip-item-header {
-    display: flex;
+    display: grid;
+    /* Spaltendefinition:
+       1. Spalte: Linke Info-Gruppe (so breit wie nötig)
+       2. Spalte: Distanz (feste Breite von 100px)
+       3. Spalte: Buttons (nimmt den restlichen Platz ein)
+    */
+    grid-template-columns: auto 100px 1fr;
     align-items: center;
-    flex-wrap: wrap;
+    /* Vertikale Zentrierung der 3 Hauptelemente */
     gap: 10px;
+    /* Abstand zwischen den Spalten */
 }
 
-/* Badge */
+/* NEU: Wrapper für Badge und Details (Spalte 1) */
+.trip-info {
+    /* Stellt sicher, dass Badge und Details untereinander stehen */
+    display: flex;
+    flex-direction: column;
+
+    /* NEU: Wichtig! Erzwingt, dass die Kindelemente (wie das Badge)
+       nur so breit wie ihr Inhalt sind und nicht die volle Spaltenbreite einnehmen. */
+    align-items: flex-start;
+
+    /* Damit es nicht vertikal mit der Distanzmitte ausgerichtet wird. (Beibehalten) */
+    align-self: start;
+}
+
+/* Badge (bleibt unverändert) */
 .trip-type-badge {
     background: var(--business-color);
     color: white;
@@ -341,18 +362,21 @@ h2 {
     background: var(--private-color);
 }
 
-/* Entfernung */
+/* Entfernung - Jetzt in Spalte 2 */
 .trip-distance {
     font-size: 18px;
     font-weight: 700;
-    margin-left: auto;
+    text-align: right;
+    /* Ausrichtung zur roten Linie. 10px ist der Abstand zum rechten Rand der Zelle. */
+    padding-right: 10px;
 }
 
-/* Buttons kompakter und dezenter */
+/* Buttons kompakter und dezenter - Jetzt in Spalte 3 */
 .trip-buttons {
     display: flex;
     gap: 6px;
-    margin-left: auto;
+    justify-content: flex-end;
+    /* Buttons an den rechten Rand der Spalte schieben */
 }
 
 .trip-buttons button {
@@ -361,16 +385,20 @@ h2 {
     border-radius: 8px;
 }
 
-/* Details */
+/* Details - MUSS jetzt ein Kind von .trip-info sein! */
 .trip-details {
+    /* KEIN grid-column mehr nötig! Es wird durch .trip-info gesteuert. */
     font-size: 13px;
     color: #666;
     margin-top: 6px;
+    /* Abstand zum Badge darüber */
     line-height: 1.3;
 }
 
-/* Notiz */
+/* Notiz - Muss unterhalb des .trip-item-header in .trip-item stehen, ODER falls es IN .trip-item-header ist: */
 .trip-note {
+    /* Wenn die Notiz in .trip-item-header ist, muss sie über alle Spalten gehen */
+    /* grid-column: 1 / -1; */
     margin-top: 6px;
     font-size: 13px;
     color: #444;
@@ -384,7 +412,6 @@ h2 {
     color: #aaa;
     font-size: 14px;
 }
-
 
 /* ========================================
    AKTIVE FAHRT
