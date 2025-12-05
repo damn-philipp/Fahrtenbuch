@@ -101,11 +101,12 @@ class UI {
             const endTime = new Date(trip.endTime).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
             const noteHtml = trip.note ? `<div class="trip-note">📝 ${trip.note}</div>` : '';
 
+            // Hier bauen wir das HTML zusammen
             return `
                 <div class="trip-item ${typeClass}">
                     <div class="trip-item-header">
                         
-                        <!-- Wrapper für Spalte 1 -->
+                        <!-- SPALTE 1: Infos -->
                         <div class="trip-info">
                             <span class="trip-type-badge ${typeClass}">${typeText}</span>
                             <div class="trip-details">
@@ -114,17 +115,23 @@ class UI {
                             </div>
                         </div>
                         
-                        <!-- Distanz (Spalte 2) -->
+                        <!-- SPALTE 2: Distanz -->
                         <span class="trip-distance">${trip.distance} km</span>
                         
-                        <!-- Button (Spalte 3) - JETZT NUR NOCH BEARBEITEN -->
+                        <!-- SPALTE 3: Button mit SVG Icon -->
                         <div class="trip-buttons">
-                            <button class="edit-button" data-trip-id="${trip.id}">Bearbeiten</button>
+                            <button class="edit-button icon-btn" data-trip-id="${trip.id}" aria-label="Bearbeiten">
+                                <svg width="20" height="20" viewBox="0 0 23.6475 23.3041" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;">
+                                    <path d="M17.0714 3.37706L15.5591 4.88935L7.07275 4.88935C5.47119 4.88935 4.56299 5.79755 4.56299 7.39912L4.56299 16.5397C4.56299 18.1511 5.47119 19.0495 7.07275 19.0495L16.2134 19.0495C17.8247 19.0495 18.7231 18.1511 18.7231 16.5397L18.7231 8.12957L20.2422 6.60772C20.2787 6.85929 20.2954 7.12741 20.2954 7.40888L20.2954 16.5397C20.2954 19.1667 18.8403 20.6218 16.2134 20.6218L7.07275 20.6218C4.45557 20.6218 2.99072 19.1667 2.99072 16.5397L2.99072 7.40888C2.99072 4.78193 4.45557 3.31708 7.07275 3.31708L16.2134 3.31708C16.5157 3.31708 16.8024 3.33648 17.0714 3.37706Z" fill="currentColor" />
+                                    <path d="M9.61182 14.2936L11.5161 13.4636L20.6372 4.35224L19.2993 3.03388L10.188 12.1452L9.30908 13.9811C9.23096 14.1472 9.42627 14.3718 9.61182 14.2936ZM21.3599 3.63935L22.063 2.91669C22.395 2.56513 22.395 2.09638 22.063 1.77412L21.8384 1.53974C21.5356 1.23701 21.0571 1.27607 20.7349 1.58857L20.022 2.29169Z" fill="currentColor" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
+                    
                     ${noteHtml}
-                </div>
-            `;
+                </div> 
+            `; // <--- WICHTIG: Hier fehlte wahrscheinlich das letzte </div> oder das schließende Backtick `
         }).join('');
     }
 

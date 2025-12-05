@@ -78,20 +78,44 @@ body {
 
 .settings-icon,
 .back-button {
+    /* WICHTIG: Flexbox aktiviert das Zentrieren */
+    display: flex;
+    align-items: center;
+    /* Zentriert vertikal */
+    justify-content: center;
+    /* Zentriert horizontal */
+
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
+
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    font-size: 20px;
+
     cursor: pointer;
     transition: all 0.3s;
+
+    /* WICHTIG: Standard-Abstände des Browsers entfernen */
+    padding: 0;
+}
+
+/* Damit das SVG selbst sich korrekt verhält */
+.settings-icon svg,
+.back-button svg {
+    width: 22px;
+    /* Die sichtbare Größe des Icons */
+    height: auto;
+    /* Behält das Seitenverhältnis bei */
+    display: block;
+    /* Entfernt unsichtbare Abstände unter dem Icon */
 }
 
 .settings-icon:active,
 .back-button:active {
     background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.95);
+    /* Der Wobble-Effekt beim Drücken */
 }
 
 /* ========================================
@@ -169,6 +193,8 @@ h2 {
 /* ========================================
    BUTTONS
    ======================================== */
+
+/* --- Auswahl-Buttons (Geschäftlich/Privat) --- */
 .trip-type {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -182,9 +208,16 @@ h2 {
     background: white;
     border-radius: var(--corner-radius);
     font-size: 16px;
-    cursor: pointer;
-    transition: all 0.5s;
     font-weight: 500;
+    cursor: pointer;
+    /* Schnelle Transition für knackiges Feedback */
+    transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
+}
+
+/* Klick-Effekt (Wobble) für Auswahl-Buttons */
+.trip-type button:active {
+    transform: scale(0.96);
+    /* Verkleinert sich beim Drücken leicht */
 }
 
 .trip-type button.active {
@@ -193,6 +226,21 @@ h2 {
     border-color: var(--primary-color);
 }
 
+/* Farb-Logik für die spezifischen Typen */
+.trip-type button#businessBtn.active,
+.trip-type button#editBusinessBtn.active {
+    background: var(--business-color);
+    border-color: var(--business-color);
+}
+
+.trip-type button#privateBtn.active,
+.trip-type button#editPrivateBtn.active {
+    background: var(--private-color);
+    border-color: var(--private-color);
+}
+
+
+/* --- Große Aktions-Buttons (Start, Stop, Speichern) --- */
 .action-button {
     width: 100%;
     padding: 18px;
@@ -201,8 +249,16 @@ h2 {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
     margin-bottom: 10px;
+    transition: transform 0.1s;
+    /* Nur Transformation animieren */
+}
+
+/* Klick-Effekt (Wobble) für große Buttons */
+.action-button:active {
+    transform: scale(0.96);
+    /* Deutliches Feedback beim Drücken */
+    opacity: 0.9;
 }
 
 .start-button {
@@ -225,46 +281,60 @@ h2 {
     color: white;
 }
 
-.action-button:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-}
-
-.edit-button,
-.delete-button {
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.edit-button {
-    background: var(--primary-color);
-}
-
-.delete-button {
-    background: var(--danger-color);
-}
-
 .button-group {
     display: flex;
     gap: 10px;
 }
 
-.trip-type button#businessBtn.active,
-.trip-type button#editBusinessBtn.active {
-    background: var(--business-color);
-    color: #fff;
-    border-color: var(--business-color);
+
+/* --- Kleiner Runder Icon-Button (Bearbeiten in der Liste) --- */
+/* Der Button für das Editier-Icon */
+/* Der Button für das Editier-Icon */
+.trip-buttons .edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    /* Runde Klickfläche */
+
+    background-color: transparent;
+
+    /* HIER IST DIE WICHTIGE ÄNDERUNG: */
+    border: 0 !important;
+    /* Entfernt den CSS-Rahmen garantiert */
+    outline: none;
+    /* Entfernt Fokus-Rahmen (manchmal blau) */
+
+    color: var(--primary-color);
+
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.1s;
 }
 
-.trip-type button#privateBtn.active,
-.trip-type button#editPrivateBtn.active {
-    background: var(--private-color);
-    color: #fff;
-    border-color: var(--private-color);
+/* Klick-Effekt */
+.trip-buttons .edit-button:active {
+    transform: scale(0.90);
+    background-color: rgba(0, 0, 0, 0.05);
+    /* Nur Hintergrund grau, kein Rahmen */
+}
+
+/* Klick-Effekt (Wobble) für den runden Button */
+.trip-buttons .edit-button:active {
+    transform: scale(0.90);
+    /* Zieht sich etwas stärker zusammen */
+    background-color: rgba(0, 0, 0, 0.05);
+    /* Leichtes Grau als Feedback */
+}
+
+/* SVG Größe im Button sicherstellen */
+.trip-buttons .edit-button svg {
+    display: block;
+    width: 20px;
+    height: 20px;
 }
 
 /* ========================================
@@ -372,18 +442,57 @@ h2 {
     padding-right: 0;
 }
 
-/* Buttons kompakter und dezenter - Jetzt in Spalte 3 */
+/* ========================================
+   ICON BUTTON DESIGN
+   ======================================== */
+
+/* Container */
 .trip-buttons {
     display: flex;
-    gap: 6px;
     justify-content: flex-end;
-    /* Buttons an den rechten Rand der Spalte schieben */
+    min-width: 44px;
+    /* Breite eines Finger-Taps */
 }
 
-.trip-buttons button {
-    padding: 6px 10px;
-    font-size: 13px;
-    border-radius: 8px;
+/* Der runde Button */
+.trip-buttons .edit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    /* Fixe Breite */
+    height: 40px;
+    /* Fixe Höhe */
+    padding: 0;
+    border-radius: 50%;
+    /* Rund */
+
+    /* Farben */
+    background-color: transparent;
+    /* Transparent oder leichtes Grau: #f1f5f9 */
+    color: var(--primary-color);
+    /* Das färbt das SVG Icon blau! */
+    border: 1px solid var(--primary-color);
+    /* Dünner blauer Rand (optional) */
+
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Hover / Active Effekt */
+.trip-buttons .edit-button:active,
+.trip-buttons .edit-button:hover {
+    background-color: var(--primary-color);
+    /* Bei Klick blau werden */
+    color: white;
+    /* Icon wird weiß */
+}
+
+/* SVG Anpassung */
+.trip-buttons .edit-button svg {
+    display: block;
+    /* Größe wird durch das SVG-Attribut bestimmt, kann hier aber überschrieben werden */
 }
 
 /* Details - MUSS jetzt ein Kind von .trip-info sein! */
