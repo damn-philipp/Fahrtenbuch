@@ -14,6 +14,7 @@ let editingTripId = null;
  * Wird beim Laden der Seite ausgeführt
  */
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initializeApp();
     attachEventListeners();
 });
@@ -229,5 +230,37 @@ function handleResetApp() {
             tripManager.resetApp();
             location.reload();
         }
+    }
+}
+
+/**
+ * THEME MANAGEMENT
+ */
+function initTheme() {
+    const savedTheme = localStorage.getItem('appTheme') || 'system';
+    const themeSelect = document.getElementById('themeSelect');
+
+    // Theme anwenden
+    applyTheme(savedTheme);
+
+    // Dropdown setzen (falls wir auf der Settings Seite sind)
+    if (themeSelect) {
+        themeSelect.value = savedTheme;
+
+        // Event Listener für Änderungen
+        themeSelect.addEventListener('change', (e) => {
+            const newTheme = e.target.value;
+            applyTheme(newTheme);
+            localStorage.setItem('appTheme', newTheme);
+        });
+    }
+}
+
+function applyTheme(theme) {
+    // Wir setzen das Attribut am HTML-Tag
+    if (theme === 'system') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
     }
 }
