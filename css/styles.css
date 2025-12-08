@@ -1,123 +1,4 @@
 /* ========================================
-   FARB-KONFIGURATION & THEMES (Apple System Colors)
-   ======================================== */
-:root {
-    /* --- LIGHT MODE (Standard) --- */
-
-    /* Hintergrund: Sanfter Verlauf (System Gray 6 -> 5) */
-    --app-bg-start: #F2F2F7;
-    --app-bg-end: #E5E5EA;
-
-    /* Text */
-    --text-main: #000000;
-    --text-secondary: #3C3C43;
-    /* Apple Label Secondary */
-
-    /* SYSTEM FARBEN (Deine Werte für Light Mode) */
-    --primary-color: rgb(0, 136, 255);
-    /* Apple Blue: Interaktion (Export, Edit, Icons) */
-    --success-color: rgb(52, 199, 89);
-    /* Apple Green: Start */
-    --danger-color: rgb(255, 56, 60);
-    /* Apple Red: Stop, Löschen */
-
-    /* Deine spezifischen Typ-Farben (können wir lassen oder anpassen) */
-    --business-color: #e20074;
-    /* Telekom Magenta ist okay als Branding */
-    --private-color: rgb(0, 136, 255);
-    /* "Privat" passt gut zum Apple Blue */
-
-    --corner-radius: 12px;
-
-    /* Glassmorphism Cards (Light) */
-    --card-bg: rgba(255, 255, 255, 0.65);
-    --card-border: rgba(255, 255, 255, 0.4);
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-
-    /* Inputs */
-    --input-bg: rgba(255, 255, 255, 0.8);
-    --input-border: #c6c6c8;
-    /* System Gray 3 */
-}
-
-/* --- DARK MODE DEFINITIONEN --- */
-/* Wir speichern die dunklen Werte in einer "unsichtbaren" Regel, 
-   damit wir sie nicht doppelt schreiben müssen (DRY Prinzip) */
-:root {
-    --dark-app-bg-start: #000000;
-    --dark-app-bg-end: #1C1C1E;
-    --dark-text-main: #FFFFFF;
-    --dark-text-secondary: #EBEBF5;
-
-    --dark-primary-color: rgb(0, 145, 255);
-    --dark-success-color: rgb(48, 209, 88);
-    --dark-danger-color: rgb(255, 66, 69);
-
-    --dark-business-color: #ff4d9e;
-    --dark-private-color: rgb(0, 145, 255);
-
-    --dark-card-bg: rgba(28, 28, 30, 0.60);
-    --dark-card-border: rgba(255, 255, 255, 0.1);
-    --dark-card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-
-    --dark-input-bg: rgba(44, 44, 46, 0.8);
-    --dark-input-border: #38383a;
-}
-
-/* WANN wird der Dark Mode aktiviert? */
-
-/* 1. Wenn der Nutzer MANUELL "Dunkel" gewählt hat */
-[data-theme="dark"] {
-    --app-bg-start: var(--dark-app-bg-start);
-    --app-bg-end: var(--dark-app-bg-end);
-    --text-main: var(--dark-text-main);
-    --text-secondary: var(--dark-text-secondary);
-    --primary-color: var(--dark-primary-color);
-    --success-color: var(--dark-success-color);
-    --danger-color: var(--dark-danger-color);
-    --business-color: var(--dark-business-color);
-    --private-color: var(--dark-private-color);
-    --card-bg: var(--dark-card-bg);
-    --card-border: var(--dark-card-border);
-    --card-shadow: var(--dark-card-shadow);
-    --input-bg: var(--dark-input-bg);
-    --input-border: var(--dark-input-border);
-}
-
-/* 2. Wenn das SYSTEM auf "Dunkel" steht UND der Nutzer NICHT "Hell" erzwungen hat */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --app-bg-start: var(--dark-app-bg-start);
-        --app-bg-end: var(--dark-app-bg-end);
-        --text-main: var(--dark-text-main);
-        --text-secondary: var(--dark-text-secondary);
-        --primary-color: var(--dark-primary-color);
-        --success-color: var(--dark-success-color);
-        --danger-color: var(--dark-danger-color);
-        --business-color: var(--dark-business-color);
-        --private-color: var(--dark-private-color);
-        --card-bg: var(--dark-card-bg);
-        --card-border: var(--dark-card-border);
-        --card-shadow: var(--dark-card-shadow);
-        --input-bg: var(--dark-input-bg);
-        --input-border: var(--dark-input-border);
-    }
-
-    /* Dark Mode Anpassung für Active Trip (nur CSS Logik) */
-    :root:not([data-theme="light"]) .active-trip,
-    [data-theme="dark"] .active-trip {
-        background: rgba(60, 50, 20, 0.8);
-        color: #fff;
-    }
-
-    /* Dark Mode Anpassung für Edit Button Hintergrund */
-    :root:not([data-theme="light"]) .trip-buttons .edit-button:active,
-    [data-theme="dark"] .trip-buttons .edit-button:active {
-        background-color: rgba(128, 128, 128, 0.2);
-    }
-}
-
-/* ========================================
    GRUNDLEGENDES LAYOUT
    ======================================== */
 * {
@@ -163,19 +44,48 @@ body {
     flex: 1;
 }
 
+/* ========================================
+   HEADER BUTTONS (Floating Style)
+   ======================================== */
 .settings-icon,
 .back-button {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    /* HIER IST DER APPLE LOOK: */
+    background: var(--float-btn-bg);
+    /* Milchiger Hintergrund */
+    backdrop-filter: blur(12px);
+    /* Blur Effekt */
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--float-btn-shadow);
+    /* Der Schatten zum Schweben */
+
     border: none;
+
+    /* Farbe des Icons: Apple nutzt hier oft die Primärfarbe (Blau) oder Schwarz/Weiß.
+       Da deine App Blau als Akzent hat, sieht Blau auf Weiß sehr gut aus. 
+       Willst du es exakt wie im Screenshot (Schwarz), nimm: var(--text-main) */
     color: var(--primary-color);
-    width: 44px;
-    height: 44px;
+
+    width: 40px;
+    /* Apple Standard ist oft 32-40px für diese Kreise */
+    height: 40px;
     border-radius: 50%;
+
     cursor: pointer;
-    transition: all 0.3s;
+    transition: transform 0.1s, background-color 0.2s;
     padding: 0;
+    z-index: 10;
+    /* Damit sie über dem Inhalt schweben */
+}
+
+.settings-icon:active,
+.back-button:active {
+    transform: scale(0.92);
+    /* Drück-Effekt */
+    opacity: 0.8;
 }
 
 .settings-icon svg,
@@ -183,12 +93,6 @@ body {
     width: 22px;
     height: auto;
     display: block;
-}
-
-.settings-icon:active,
-.back-button:active {
-    background: rgba(120, 120, 128, 0.4);
-    transform: scale(0.95);
 }
 
 /* ========================================
@@ -321,24 +225,39 @@ h2 {
     background: var(--private-color);
 }
 
-/* --- Aktions-Buttons --- */
+/* --- Große Aktions-Buttons --- */
 .action-button {
     width: 100%;
     padding: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--corner-radius);
-    font-size: 18px;
-    font-weight: bold;
+
+    /* Apple Style: KEIN Rand (oder extrem subtil) und KEIN Schatten */
+    border: none;
+    /* Falls du den Glas-Effekt behalten willst, nimm: border: 1px solid rgba(255,255,255,0.1); */
+
+    border-radius: 999px;
+    /* Pill Shape (bleibt) */
+
+    font-size: 17px;
+    /* Apple nutzt meist 17pt für Body text, 18px ist aber auch ok */
+    font-weight: 600;
+    /* Apple ist oft "Semi-Bold" (600), nicht ganz "Bold" (700) */
     cursor: pointer;
     margin-bottom: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    transition: transform 0.1s, box-shadow 0.2s;
+
+    /* WICHTIG: Schatten entfernen für den Flat-Look */
+    box-shadow: none;
+
+    transition: transform 0.1s, opacity 0.2s;
     color: white;
 }
 
+/* Beim Drücken wird der Button bei Apple meistens nur etwas transparenter */
 .action-button:active {
-    transform: scale(0.96);
-    opacity: 0.9;
+    transform: scale(0.98);
+    /* Ganz leichtes drücken */
+    opacity: 0.7;
+    /* Das ist der typische iOS "Touch"-Effekt */
+    box-shadow: none;
 }
 
 .start-button {
@@ -354,8 +273,20 @@ h2 {
 }
 
 .button-secondary {
-    background: rgba(107, 114, 128, 0.8);
-    backdrop-filter: blur(4px);
+    /* Variable nutzen */
+    background: var(--btn-sec-bg);
+    color: var(--btn-sec-text);
+
+    /* Apple Style Anpassungen */
+    font-weight: 600;
+    /* Falls du den Button auch rund haben willst wie die Action-Buttons: */
+    border-radius: 999px;
+
+    /* Falls du KEINEN Rahmen willst (Apple Style): */
+    border: none;
+
+    /* Falls du den Glas-Effekt hier behalten willst (optional): */
+    backdrop-filter: blur(5px);
 }
 
 .button-group {
@@ -363,33 +294,45 @@ h2 {
     gap: 10px;
 }
 
-/* --- Edit Icon Button --- */
+/* --- Kleiner Runder Icon-Button (Floating Style) --- */
 .trip-buttons .edit-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+
+    width: 40px;
+    /* 40px ist ein guter Standard für diese Bubbles */
+    height: 40px;
     padding: 0;
     border-radius: 50%;
-    background-color: transparent;
+
+    /* APPLE LOOK ÜBERNEHMEN: */
+    background: var(--float-btn-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    /* Etwas kleinerer Schatten in der Liste */
+
     border: 0 !important;
     outline: none;
+
     color: var(--primary-color);
+    /* Blaues Icon */
+
     cursor: pointer;
-    transition: transform 0.1s, background-color 0.1s;
+    transition: transform 0.1s, opacity 0.2s;
 }
 
 .trip-buttons .edit-button:active {
-    transform: scale(0.90);
-    /* Im Dark Mode machen wir den Hintergrund heller, im Light Mode dunkler */
-    background-color: rgba(128, 128, 128, 0.2);
+    transform: scale(0.92);
+    opacity: 0.8;
 }
 
 .trip-buttons .edit-button svg {
     display: block;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    /* Icon etwas kleiner im Kreis */
+    height: 20px;
 }
 
 /* ========================================
@@ -567,14 +510,28 @@ h2 {
 
 .modal-content {
     background: var(--card-bg);
-    /* Nutzt Systemfarben */
     backdrop-filter: blur(20px);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
+    -webkit-backdrop-filter: blur(20px);
+
+    /* Apple Style: Sehr subtiler Rand für das Modal */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    /* HIER IST DIE ÄNDERUNG: */
+    border-radius: 28px;
+    /* Deutlich runder, passend zum Screenshot */
+
     padding: 25px;
-    max-width: 500px;
+    max-width: 320px;
+    /* Apple Alerts sind oft schmaler, ca. 270-320px */
     width: 100%;
+
+    /* Der Schatten HINTER dem Modal bleibt, das ist korrekt */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
     color: var(--text-main);
+    text-align: center;
+    /* Apple Alerts sind meist zentriert */
+
     max-height: 90vh;
     overflow-y: auto;
 }
