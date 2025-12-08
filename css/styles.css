@@ -212,7 +212,7 @@ h2 {
     /* Liegt unter dem Text */
 
     /* Die Magic-Animation */
-    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s;
+    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.4s;
 
     /* Standard-Schatten */
     box-shadow: var(--seg-shadow);
@@ -300,16 +300,44 @@ h2 {
 
 /* --- 5. MODUL: HEADER --- */
 .header {
-    text-align: center;
+    /* Wir nutzen Grid statt Flexbox für stabile Positionierung */
+    display: grid;
+
+    /* Definition der 3 Spalten:
+       1. Spalte: Exakt 44px (für Zurück-Button)
+       2. Spalte: 1fr (Der Rest für den Titel)
+       3. Spalte: Exakt 44px (für Settings-Button)
+    */
+    grid-template-columns: 44px 1fr 44px;
+
+    align-items: center;
     color: var(--text-main);
     margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+    /* Zentriert den Text innerhalb der mittleren Spalte */
+    text-align: center;
 }
 
 .header h1 {
-    flex: 1;
+    font-size: 32px;
+    margin: 0;
+    /* Wichtig: Standard-Abstände entfernen */
+
+    /* Zwingt den Titel IMMER in die mittlere Spalte (2),
+       egal ob links oder rechts Buttons da sind oder nicht. */
+    grid-column: 2;
+    white-space: nowrap;
+}
+
+/* Wir weisen die Buttons explizit ihren Spalten zu */
+.back-button {
+    grid-column: 1;
+    justify-self: start;
+}
+
+.settings-icon {
+    grid-column: 3;
+    justify-self: end;
 }
 
 /* --- 6. MODUL: KM ANZEIGE --- */
@@ -541,4 +569,11 @@ h2 {
     padding: 15px;
     border-radius: 12px;
     border: 1px solid var(--danger-color);
+}
+
+/* ========================================
+   UTILITY KLASSEN
+   ======================================== */
+.hidden {
+    display: none !important;
 }
