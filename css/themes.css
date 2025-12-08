@@ -58,6 +58,15 @@
 
     --float-btn-bg: rgba(255, 255, 255, 0.85);
     --float-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    /* Segmented Control Colors (iOS Style) */
+    --seg-bg: rgba(118, 118, 128, 0.12);
+    /* Hellgrauer Container */
+    --seg-active-bg: #FFFFFF;
+    /* Weißer Button darauf */
+    --seg-text: #000000;
+    --seg-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    /* Kleiner Schatten für den weißen Button */
 }
 
 /* 2. DARK MODE AKTIVIERUNG */
@@ -82,6 +91,11 @@
     --btn-sec-text: #FFFFFF;
     --float-btn-bg: rgba(44, 44, 46, 0.85);
     --float-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --seg-bg: rgba(118, 118, 128, 0.24);
+    --seg-active-bg: #636366;
+    /* System Gray 3 */
+    --seg-text: #FFFFFF;
+    --seg-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* B) Wenn SYSTEM auf "Dunkel" steht (und nicht manuell überschrieben) */
@@ -105,6 +119,11 @@
         --btn-sec-text: #FFFFFF;
         --float-btn-bg: rgba(44, 44, 46, 0.85);
         --float-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --seg-bg: rgba(118, 118, 128, 0.24);
+        --seg-active-bg: #636366;
+        /* System Gray 3 */
+        --seg-text: #FFFFFF;
+        --seg-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
     }
 
     /* CSS-Logik für Elemente im Dark Mode (System oder Manuell) */
@@ -141,6 +160,10 @@
     --btn-sec-text: #FFFFFF;
     --float-btn-bg: rgba(30, 41, 59, 0.85);
     --float-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --seg-bg: rgba(0, 0, 0, 0.3);
+    --seg-active-bg: rgba(56, 189, 248, 0.2);
+    /* Leichtes Blau */
+    --seg-text: #FFFFFF;
 }
 
 [data-theme="midnight"] .active-trip {

@@ -9,6 +9,9 @@ const tripManager = new TripManager();
 // Aktuell bearbeitete Trip-ID (für Edit-Modal)
 let editingTripId = null;
 
+// NEU: Wie viele Fahrten sollen initial angezeigt werden?
+let currentListLimit = 10;
+
 /**
  * INITIALISIERUNG
  * Wird beim Laden der Seite ausgeführt
@@ -28,7 +31,7 @@ function initializeApp() {
     if (state.hasInitialKm) {
         UI.showSetupCard(false);
         UI.updateKmDisplay(tripManager.currentKmStand);
-        UI.renderTripList(tripManager.trips);
+        UI.renderTripList(tripManager.trips, currentListLimit)
         UI.updateSummary(tripManager.calculateSummary());
 
         if (state.hasActiveTrip) {
@@ -89,11 +92,18 @@ function attachEventListeners() {
     });
 
     // Trip List (Event Delegation)
-    // GEÄNDERT: Hört nur noch auf den 'edit-button', da der 'delete-button' aus der Liste entfernt wurde
     document.getElementById('tripList').addEventListener('click', (e) => {
-        if (e.target.classList.contains('edit-button')) {
-            const tripId = parseInt(e.target.dataset.tripId);
+        // Klick auf "Bearbeiten"
+        if (e.target.closest('.edit-button')) {
+            // .closest() ist sicherer, falls man das SVG Icon trifft
+            const btn = e.target.closest('.edit-button');
+            const tripId = parseInt(btn.dataset.tripId);
             handleEditTrip(tripId);
+        }
+        // NEU: Klick auf "Mehr anzeigen"
+        else if (e.target.id === 'showMoreBtn') {
+            currentListLimit += 10; // 10 weitere laden
+            UI.renderTripList(tripManager.trips, currentListLimit);
         }
     });
 }
@@ -138,7 +148,10 @@ function handleEndTrip() {
 
     UI.hideActiveTrip();
     UI.updateKmDisplay(tripManager.currentKmStand);
-    UI.renderTripList(tripManager.trips);
+
+    currentListLimit = 10;
+
+    UI.renderTripList(tripManager.trips, currentListLimit)
     UI.updateSummary(tripManager.calculateSummary());
     UI.clearInput('endKm');
 }
@@ -161,7 +174,7 @@ function handleSaveEdit() {
 
     if (success) {
         UI.closeEditModal();
-        UI.renderTripList(tripManager.trips);
+        UI.renderTripList(tripManager.trips, currentListLimit)
         UI.updateSummary(tripManager.calculateSummary());
         editingTripId = null;
     } else {
@@ -179,7 +192,7 @@ function handleModalDeleteTrip() {
         const success = tripManager.deleteTrip(tripId);
 
         if (success) {
-            UI.renderTripList(tripManager.trips);
+            UI.renderTripList(tripManager.trips, currentListLimit)
             UI.updateSummary(tripManager.calculateSummary());
             UI.closeEditModal(); // WICHTIG: Modal schließen
             editingTripId = null;
@@ -217,7 +230,8 @@ function handleClearAllTrips() {
     if (UI.confirm('Wirklich ALLE Fahrten löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) {
         if (UI.confirm('Bist du dir absolut sicher? Alle Daten gehen verloren!')) {
             tripManager.clearAllTrips();
-            UI.renderTripList(tripManager.trips);
+            currentListLimit = 10;
+            UI.renderTripList(tripManager.trips, currentListLimit)
             UI.updateSummary(tripManager.calculateSummary());
             UI.alert('Alle Fahrten wurden gelöscht.');
         }

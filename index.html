@@ -26,7 +26,16 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <button class="back-button hidden" id="backButton">←</button>
+            <button class="back-button hidden" id="backButton" aria-label="Zurück">
+                <!-- Dein neues SVG (optimiert) -->
+                <svg width="12" height="17" viewBox="0 0 12.3926 16.9629" xmlns="http://www.w3.org/2000/svg"
+                    style="pointer-events: none;">
+                    <path
+                        d="M0 8.47656C0 8.7207 0.0878906 8.93555 0.273438 9.12109L8.01758 16.6895C8.18359 16.8652 8.39844 16.9531 8.65234 16.9531C9.16016 16.9531 9.55078 16.5723 9.55078 16.0645C9.55078 15.8105 9.44336 15.5957 9.28711 15.4297L2.17773 8.47656L9.28711 1.52344C9.44336 1.35742 9.55078 1.13281 9.55078 0.888672C9.55078 0.380859 9.16016 0 8.65234 0C8.39844 0 8.18359 0.0878906 8.01758 0.253906L0.273438 7.83203C0.0878906 8.00781 0 8.23242 0 8.47656Z"
+                        fill="currentColor" />
+                </svg>
+            </button>
+
             <h1>Fahrtenbuch</h1>
 
             <!-- HIER IST DER NEUE BUTTON: -->
@@ -74,8 +83,9 @@
                 <div id="startSection">
                     <h2>Neue Fahrt</h2>
                     <div class="trip-type">
-                        <button id="businessBtn" class="active">Geschäftlich</button>
+                        <button id="businessBtn" class="active">Dienstlich</button>
                         <button id="privateBtn">Privat</button>
+                        <div class="glider"></div>
                     </div>
                     <div class="input-group">
                         <label>Notiz (optional)</label>
@@ -100,7 +110,7 @@
                 <h2>Übersicht</h2>
                 <div class="summary">
                     <div class="summary-item">
-                        <div class="label">Geschäftlich</div>
+                        <div class="label">Dienstlich</div>
                         <div class="value" id="businessKm">0 km</div>
                     </div>
                     <div class="summary-item">
@@ -182,8 +192,9 @@
             </div>
 
             <div class="trip-type">
-                <button id="editBusinessBtn">Geschäftlich</button>
+                <button id="editBusinessBtn">Dienstlich</button>
                 <button id="editPrivateBtn">Privat</button>
+                <div class="glider"></div>
             </div>
 
             <div class="input-group">
