@@ -151,10 +151,7 @@ h2 {
     gap: 10px;
 }
 
-/* C) Segmented Control (Dienstlich / Privat Umschalter) */
-/* ========================================
-   SEGMENTED CONTROL (Animated Sliding Pill)
-   ======================================== */
+/* C) Segmented Control (Animated Sliding Pill) */
 .trip-type {
     display: flex;
     background: var(--seg-bg);
@@ -162,38 +159,47 @@ h2 {
     border-radius: 999px;
     margin-bottom: 20px;
     position: relative;
-    /* Wichtig für absolute Positionierung des Gliders */
+    /* Wichtig für den Glider */
     z-index: 1;
 }
 
-/* --- Der Text-Button (liegt ÜBER dem Glider) --- */
+/* Die Buttons (Text) */
 .trip-type button {
     flex: 1;
     border: none;
     background: transparent;
-    /* Kein eigener Hintergrund mehr */
+    /* Kein Hintergrund, das macht der Glider */
     box-shadow: none;
     backdrop-filter: none;
 
     padding: 14px 0;
+    /* Höhe passend zum Start-Button */
     border-radius: 999px;
 
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-main);
 
     cursor: pointer;
     position: relative;
     z-index: 2;
-    /* Muss über dem Glider liegen */
+    /* Liegt ÜBER dem Glider */
     transition: color 0.2s ease-in-out;
-    /* Nur die Textfarbe animieren */
 }
 
-/* Textfarbe wird Weiß, wenn aktiv */
+.trip-type button:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+}
+
+/* Textfarbe wird Weiß (oder Systemfarbe), wenn aktiv */
 .trip-type button.active {
     color: #FFFFFF !important;
-    font-weight: 600;
+}
+
+/* Ausnahme für den "Übersicht"-Toggle (der soll nicht weiß werden, sondern dunkel bleiben) */
+.summary-toggle button.active {
+    color: var(--text-main) !important;
 }
 
 
@@ -203,37 +209,45 @@ h2 {
     top: 4px;
     left: 4px;
     bottom: 4px;
-
-    /* Breite ist 50% minus dem Padding (4px) und einem kleinen Spalt */
     width: calc(50% - 4px);
+    /* Breite 50% minus Abstand */
 
     border-radius: 999px;
     z-index: 1;
-    /* Liegt unter dem Text */
+    /* Liegt UNTER dem Text */
 
-    /* Die Magic-Animation */
-    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.4s;
-
-    /* Standard-Schatten */
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s;
     box-shadow: var(--seg-shadow);
+
+    /* Standard-Farbe (für Summary Toggle) */
+    background-color: var(--seg-active-bg);
+}
+
+/* --- LOGIK: Wohin rutscht der Glider? --- */
+
+/* Fall 1: Linker Button aktiv -> Glider links */
+.trip-type button:first-of-type.active~.glider {
+    transform: translateX(0%);
+}
+
+/* Fall 2: Rechter Button aktiv -> Glider rechts */
+.trip-type button:nth-of-type(2).active~.glider {
+    transform: translateX(100%);
 }
 
 
-/* --- LOGIK: Wohin rutscht der Glider & welche Farbe hat er? --- */
+/* --- FARB-LOGIK (Nur für den Haupt-Schalter "Neue Fahrt") --- */
 
-/* Fall 1: Der ERSTE Button (Dienstlich) ist aktiv */
-/* Wenn der erste Button .active hat, bleibt der Glider links (translateX 0) */
-/* Der Selektor "~ .glider" bedeutet: Wähle den Glider, der nach dem Button kommt */
-.trip-type button:first-of-type.active~.glider {
-    transform: translateX(0%);
+/* Wenn "Dienstlich" (Button 1) aktiv ist -> Magenta */
+.trip-type button#businessBtn.active~.glider,
+.trip-type button#editBusinessBtn.active~.glider {
     background-color: var(--business-color);
     box-shadow: 0 4px 12px rgba(226, 0, 116, 0.3);
 }
 
-/* Fall 2: Der ZWEITE Button (Privat) ist aktiv */
-/* Wenn der zweite Button .active hat, rutscht der Glider 100% nach rechts */
-.trip-type button:nth-of-type(2).active~.glider {
-    transform: translateX(100%);
+/* Wenn "Privat" (Button 2) aktiv ist -> Blau */
+.trip-type button#privateBtn.active~.glider,
+.trip-type button#editPrivateBtn.active~.glider {
     background-color: var(--private-color);
     box-shadow: 0 4px 12px rgba(0, 136, 255, 0.3);
 }

@@ -6,33 +6,32 @@
 // Globale Instanz des TripManagers
 const tripManager = new TripManager();
 
-// Aktuell bearbeitete Trip-ID (für Edit-Modal)
-let editingTripId = null;
-
-// NEU: Wie viele Fahrten sollen initial angezeigt werden?
-let currentListLimit = 10;
+// Globale Status-Variablen
+let editingTripId = null;       // ID der Fahrt, die gerade bearbeitet wird
+let currentListLimit = 10;      // Anzahl der angezeigten Fahrten
+let summaryMode = 'week';       // 'week' oder 'total' für die Übersicht
 
 /**
  * INITIALISIERUNG
- * Wird beim Laden der Seite ausgeführt
  */
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
-    initializeApp();
-    attachEventListeners();
+    initTheme();            // 1. Theme laden (Dark/Light)
+    initializeApp();        // 2. Daten laden
+    attachEventListeners(); // 3. Buttons aktivieren
 });
 
-/**
- * Initialisiert die Applikation
- */
 function initializeApp() {
     const state = tripManager.initialize();
 
     if (state.hasInitialKm) {
         UI.showSetupCard(false);
         UI.updateKmDisplay(tripManager.currentKmStand);
-        UI.renderTripList(tripManager.trips, currentListLimit)
-        UI.updateSummary(tripManager.calculateSummary());
+
+        // Liste rendern (mit Limit)
+        UI.renderTripList(tripManager.trips, currentListLimit);
+
+        // Übersicht aktualisieren
+        updateSummaryDisplay();
 
         if (state.hasActiveTrip) {
             UI.showActiveTrip(tripManager.activeTrip);
@@ -43,45 +42,88 @@ function initializeApp() {
 }
 
 /**
- * EREIGNIS-HANDLER
- * Verbindet UI-Elemente mit Funktionen
+ * EREIGNIS-LISTENER (Aufgeräumt & Gruppiert)
  */
 function attachEventListeners() {
-    // Setup
-    document.getElementById('saveInitialKmBtn').addEventListener('click', handleSaveInitialKm);
 
-    // Trip Type Selection
+    // --- 1. SETUP & KM-STAND ---
+    document.getElementById('saveInitialKmBtn').addEventListener('click', handleSaveInitialKm);
+    document.getElementById('updateKmBtn').addEventListener('click', handleUpdateKm);
+
+    // --- 2. HAUPTSEITE: NEUE FAHRT ---
     document.getElementById('businessBtn').addEventListener('click', () => handleTripTypeSelect('business'));
     document.getElementById('privateBtn').addEventListener('click', () => handleTripTypeSelect('private'));
-
-    // Start/Stop Trip
     document.getElementById('startTripBtn').addEventListener('click', handleStartTrip);
     document.getElementById('endTripBtn').addEventListener('click', handleEndTrip);
 
-    // Export
-    document.getElementById('exportBtn').addEventListener('click', handleExport);
-    document.getElementById('exportBtn2').addEventListener('click', handleExport);
+    // --- 3. HAUPTSEITE: ÜBERSICHT (SUMMARY) ---
+    document.getElementById('summaryWeekBtn').addEventListener('click', () => {
+        summaryMode = 'week';
+        document.getElementById('summaryWeekBtn').classList.add('active');
+        document.getElementById('summaryTotalBtn').classList.remove('active');
+        updateSummaryDisplay();
+    });
 
-    // Settings
+    document.getElementById('summaryTotalBtn').addEventListener('click', () => {
+        summaryMode = 'total';
+        document.getElementById('summaryTotalBtn').classList.add('active');
+        document.getElementById('summaryWeekBtn').classList.remove('active');
+        updateSummaryDisplay();
+    });
+
+    // Button auf der Startseite: Leitet zu den Einstellungen weiter
+    const goToExportBtn = document.getElementById('goToExportBtn');
+    if (goToExportBtn) {
+        goToExportBtn.addEventListener('click', () => {
+            UI.openSettings();
+            // Optional: Scrollen zum Export-Bereich
+            const exportSection = document.getElementById('exportBtn2').closest('.settings-section');
+            if (exportSection) exportSection.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // --- 4. LISTE & DETAILS ---
+    // Event Delegation: Ein Listener für alle Buttons in der Liste (Bearbeiten & Mehr anzeigen)
+    document.getElementById('tripList').addEventListener('click', (e) => {
+        // A) Klick auf "Bearbeiten" (Stift)
+        if (e.target.closest('.edit-button')) {
+            const btn = e.target.closest('.edit-button');
+            const tripId = parseInt(btn.dataset.tripId);
+            handleEditTrip(tripId);
+        }
+        // B) Klick auf "Mehr anzeigen"
+        else if (e.target.id === 'showMoreBtn') {
+            currentListLimit += 10;
+            UI.renderTripList(tripManager.trips, currentListLimit);
+        }
+    });
+
+    // --- 5. EINSTELLUNGEN & EXPORT ---
     document.getElementById('settingsButton').addEventListener('click', () => UI.openSettings());
     document.getElementById('backButton').addEventListener('click', () => UI.closeSettings());
     document.getElementById('closeSettingsBtn').addEventListener('click', () => UI.closeSettings());
-    document.getElementById('updateKmBtn').addEventListener('click', handleUpdateKm);
+
+    // Die Export-Buttons in den Einstellungen
+    document.getElementById('exportBtn2').addEventListener('click', handleExport); // Detail-Export
+    const weeklyBtn = document.getElementById('exportWeeklyBtn');
+    if (weeklyBtn) weeklyBtn.addEventListener('click', handleWeeklyExport); // Wochenbericht
+
+    // Gefahrenzone
     document.getElementById('clearTripsBtn').addEventListener('click', handleClearAllTrips);
     document.getElementById('resetAppBtn').addEventListener('click', handleResetApp);
 
-    // Edit Modal - Allgemeine Buttons
+    // --- 6. MODAL (BEARBEITEN) ---
     document.getElementById('closeEditModalBtn').addEventListener('click', () => UI.closeEditModal());
     document.getElementById('cancelEditBtn').addEventListener('click', () => UI.closeEditModal());
     document.getElementById('saveEditBtn').addEventListener('click', handleSaveEdit);
 
-    // NEU: Edit Modal - Löschen Button (Der neue rote Button im Modal)
+    // Löschen im Modal
     const modalDeleteBtn = document.getElementById('modalDeleteBtn');
     if (modalDeleteBtn) {
         modalDeleteBtn.addEventListener('click', handleModalDeleteTrip);
     }
 
-    // Edit Modal Trip Type
+    // Typ-Umschalter im Modal
     document.getElementById('editBusinessBtn').addEventListener('click', () => {
         document.getElementById('editBusinessBtn').classList.add('active');
         document.getElementById('editPrivateBtn').classList.remove('active');
@@ -90,32 +132,15 @@ function attachEventListeners() {
         document.getElementById('editPrivateBtn').classList.add('active');
         document.getElementById('editBusinessBtn').classList.remove('active');
     });
-
-    // Trip List (Event Delegation)
-    document.getElementById('tripList').addEventListener('click', (e) => {
-        // Klick auf "Bearbeiten"
-        if (e.target.closest('.edit-button')) {
-            // .closest() ist sicherer, falls man das SVG Icon trifft
-            const btn = e.target.closest('.edit-button');
-            const tripId = parseInt(btn.dataset.tripId);
-            handleEditTrip(tripId);
-        }
-        // NEU: Klick auf "Mehr anzeigen"
-        else if (e.target.id === 'showMoreBtn') {
-            currentListLimit += 10; // 10 weitere laden
-            UI.renderTripList(tripManager.trips, currentListLimit);
-        }
-    });
 }
 
 /**
- * EVENT HANDLER FUNKTIONEN
+ * LOGIK-FUNKTIONEN (HANDLER)
  */
 
 function handleSaveInitialKm() {
     const input = document.getElementById('initialKm');
     const km = parseInt(input.value);
-
     if (tripManager.setInitialKm(km)) {
         UI.showSetupCard(false);
         UI.updateKmDisplay(tripManager.currentKmStand);
@@ -132,7 +157,6 @@ function handleTripTypeSelect(type) {
 function handleStartTrip() {
     const note = document.getElementById('tripNote').value;
     const trip = tripManager.startTrip(note);
-
     UI.showActiveTrip(trip);
     UI.clearInput('tripNote');
 }
@@ -149,17 +173,17 @@ function handleEndTrip() {
     UI.hideActiveTrip();
     UI.updateKmDisplay(tripManager.currentKmStand);
 
+    // Limit zurücksetzen, damit die neue Fahrt oben sichtbar ist
     currentListLimit = 10;
+    UI.renderTripList(tripManager.trips, currentListLimit);
 
-    UI.renderTripList(tripManager.trips, currentListLimit)
-    UI.updateSummary(tripManager.calculateSummary());
+    updateSummaryDisplay();
     UI.clearInput('endKm');
 }
 
 function handleEditTrip(tripId) {
     const trip = tripManager.findTripById(tripId);
     if (!trip) return;
-
     editingTripId = tripId;
     UI.openEditModal(trip);
 }
@@ -174,27 +198,24 @@ function handleSaveEdit() {
 
     if (success) {
         UI.closeEditModal();
-        UI.renderTripList(tripManager.trips, currentListLimit)
-        UI.updateSummary(tripManager.calculateSummary());
+        UI.renderTripList(tripManager.trips, currentListLimit);
+        updateSummaryDisplay();
         editingTripId = null;
     } else {
-        UI.alert('Bitte überprüfe deine Eingaben. Der End-Kilometerstand muss höher sein als der Start-Kilometerstand.');
+        UI.alert('Bitte überprüfe deine Eingaben. End-KM muss höher sein als Start-KM.');
     }
 }
 
-// NEU: Handler für das Löschen aus dem Modal heraus
 function handleModalDeleteTrip() {
-    // ID holen, die wir in ui.js an den Button gehängt haben
     const btn = document.getElementById('modalDeleteBtn');
     const tripId = parseInt(btn.dataset.tripId);
 
     if (UI.confirm('Möchten Sie diese Fahrt wirklich unwiderruflich löschen?')) {
         const success = tripManager.deleteTrip(tripId);
-
         if (success) {
-            UI.renderTripList(tripManager.trips, currentListLimit)
-            UI.updateSummary(tripManager.calculateSummary());
-            UI.closeEditModal(); // WICHTIG: Modal schließen
+            UI.renderTripList(tripManager.trips, currentListLimit);
+            updateSummaryDisplay();
+            UI.closeEditModal();
             editingTripId = null;
         } else {
             UI.alert('Fehler beim Löschen der Fahrt.');
@@ -202,49 +223,71 @@ function handleModalDeleteTrip() {
     }
 }
 
+// Export detailliert
 function handleExport() {
     if (tripManager.trips.length === 0) {
-        UI.alert('Keine Fahrten zum Exportieren vorhanden.');
+        UI.alert('Keine Fahrten vorhanden.');
         return;
     }
-
     const csvContent = tripManager.exportToCSV();
     const filename = `Fahrtenbuch_${new Date().toISOString().split('T')[0]}.csv`;
     UI.downloadCSV(csvContent, filename);
 }
 
+// Export Wochenbericht
+function handleWeeklyExport() {
+    if (tripManager.trips.length === 0) {
+        UI.alert('Keine Fahrten vorhanden.');
+        return;
+    }
+    const csvContent = tripManager.exportWeeklyReport();
+    const filename = `Fahrtenbuch_Wochenbericht_${new Date().toISOString().split('T')[0]}.csv`;
+    UI.downloadCSV(csvContent, filename);
+}
+
 function handleUpdateKm() {
     const newKm = parseInt(document.getElementById('editCurrentKm').value);
-
     if (UI.confirm(`KM-Stand auf ${newKm.toLocaleString('de-DE')} km ändern?`)) {
         if (tripManager.updateCurrentKm(newKm)) {
             UI.updateKmDisplay(tripManager.currentKmStand);
-            UI.alert('KM-Stand erfolgreich aktualisiert!');
+            UI.alert('KM-Stand aktualisiert!');
         } else {
-            UI.alert('Bitte gib einen gültigen Kilometerstand ein.');
+            UI.alert('Bitte gib einen gültigen Wert ein.');
         }
     }
 }
 
 function handleClearAllTrips() {
-    if (UI.confirm('Wirklich ALLE Fahrten löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) {
-        if (UI.confirm('Bist du dir absolut sicher? Alle Daten gehen verloren!')) {
+    if (UI.confirm('Wirklich ALLE Fahrten löschen?')) {
+        if (UI.confirm('Sicher? Daten gehen verloren!')) {
             tripManager.clearAllTrips();
             currentListLimit = 10;
-            UI.renderTripList(tripManager.trips, currentListLimit)
-            UI.updateSummary(tripManager.calculateSummary());
-            UI.alert('Alle Fahrten wurden gelöscht.');
+            UI.renderTripList(tripManager.trips, currentListLimit);
+            updateSummaryDisplay(); // Update auf 0
+            UI.alert('Alle Fahrten gelöscht.');
         }
     }
 }
 
 function handleResetApp() {
-    if (UI.confirm('Die GESAMTE App zurücksetzen? Alle Daten und Einstellungen gehen verloren!')) {
+    if (UI.confirm('App komplett zurücksetzen? Alle Daten werden gelöscht!')) {
         if (UI.confirm('Letzte Warnung: Wirklich ALLES löschen?')) {
             tripManager.resetApp();
             location.reload();
         }
     }
+}
+
+// Hilfsfunktion: Berechnet Zusammenfassung je nach Modus (Woche/Gesamt)
+function updateSummaryDisplay() {
+    let data;
+    if (summaryMode === 'week') {
+        data = tripManager.calculateWeeklySummary();
+    } else {
+        data = tripManager.calculateSummary();
+    }
+    // WICHTIG: Aufruf der UI Klasse, nicht sich selbst!
+    UI.updateSummary(data);
 }
 
 /**
@@ -254,14 +297,10 @@ function initTheme() {
     const savedTheme = localStorage.getItem('appTheme') || 'system';
     const themeSelect = document.getElementById('themeSelect');
 
-    // Theme anwenden
     applyTheme(savedTheme);
 
-    // Dropdown setzen (falls wir auf der Settings Seite sind)
     if (themeSelect) {
         themeSelect.value = savedTheme;
-
-        // Event Listener für Änderungen
         themeSelect.addEventListener('change', (e) => {
             const newTheme = e.target.value;
             applyTheme(newTheme);
@@ -271,7 +310,6 @@ function initTheme() {
 }
 
 function applyTheme(theme) {
-    // Wir setzen das Attribut am HTML-Tag
     if (theme === 'system') {
         document.documentElement.removeAttribute('data-theme');
     } else {

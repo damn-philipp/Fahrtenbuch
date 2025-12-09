@@ -139,8 +139,74 @@
     }
 }
 
+/* 3. PASTEL LIGHT THEME (Organic / Nature Style) */
+[data-theme="pastel"] {
+    /* Hintergrund: Ein warmes Cremeweiß / Papier-Look (statt Grau) */
+    --app-bg-start: #FDFBF7;
+    --app-bg-end: #F4F1EA;
 
-/* 3. MIDNIGHT THEME */
+    /* Text: Ein sehr dunkles Grün-Grau (weicher als Schwarz) */
+    --text-main: #1A2621;
+    --text-secondary: #5C6B64;
+
+    /* System Farben: Deine Wunschfarbe als Basis */
+    --primary-color: #5D866C;
+    /* Dein Salbei-Grün */
+    --success-color: #8FB996;
+    /* Ein helleres Frisch-Grün */
+    --danger-color: #D97D75;
+    /* Ein weiches Terrakotta-Rot */
+
+    /* Trip Typen: Angepasst, aber erkennbar */
+    --business-color: #D17B88;
+    /* Altrosa / Beere (statt Neon-Magenta) */
+    --private-color: #6D9DC5;
+    /* Ein sanftes Jeans-Blau */
+
+    /* Cards: Weißes Milchglas */
+    --card-bg: rgba(255, 255, 255, 0.75);
+    --card-border: rgba(93, 134, 108, 0.2);
+    /* Ganz zarter grüner Rand */
+    --card-shadow: 0 8px 24px rgba(93, 134, 108, 0.08);
+    /* Farbiger Schatten! */
+
+    /* Inputs */
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --input-border: #D1D9D4;
+
+    /* Sekundäre Buttons */
+    --btn-sec-bg: rgba(93, 134, 108, 0.15);
+    /* Transparente Version deiner Farbe */
+    --btn-sec-text: #2F4F3E;
+
+    /* Floating Buttons (Header & Edit) */
+    --float-btn-bg: rgba(255, 255, 255, 0.9);
+    --float-btn-shadow: 0 4px 12px rgba(93, 134, 108, 0.15);
+
+    /* Segmented Control */
+    --seg-bg: rgba(93, 134, 108, 0.1);
+    --seg-active-bg: #FFFFFF;
+    --seg-text: #1A2621;
+    --seg-shadow: 0 2px 8px rgba(93, 134, 108, 0.15);
+}
+
+/* Spezielle Anpassungen für dieses Theme */
+
+/* 1. Aktive Fahrt Hintergrund (Passend zum Natur-Look) */
+[data-theme="pastel"] .active-trip {
+    background: rgba(253, 246, 227, 0.9);
+    /* Warmes Papier */
+    color: #1A2621;
+    border-left-color: #D9A55B;
+    /* Senfgelb */
+}
+
+/* 2. Edit Button Hintergrund beim Drücken */
+[data-theme="pastel"] .trip-buttons .edit-button:active {
+    background-color: rgba(93, 134, 108, 0.2);
+}
+
+/* 4. MIDNIGHT THEME */
 [data-theme="midnight"] {
     --app-bg-start: #0f172a;
     --app-bg-end: #1e293b;

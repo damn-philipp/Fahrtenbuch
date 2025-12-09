@@ -108,6 +108,14 @@
             <!-- Summary Card -->
             <div id="summaryCard" class="card hidden">
                 <h2>Übersicht</h2>
+
+                <!-- NEU: Umschalter Woche / Gesamt -->
+                <div class="trip-type summary-toggle" style="margin-bottom: 20px;">
+                    <button id="summaryWeekBtn" class="active">Diese Woche</button>
+                    <button id="summaryTotalBtn">Gesamt</button>
+                    <div class="glider"></div>
+                </div>
+
                 <div class="summary">
                     <div class="summary-item">
                         <div class="label">Dienstlich</div>
@@ -118,7 +126,11 @@
                         <div class="value" id="privateKm">0 km</div>
                     </div>
                 </div>
-                <button class="action-button export-button" id="exportBtn">Als CSV exportieren</button>
+
+                <!-- ÄNDERUNG: Neuer Text & ID für den Button -->
+                <button class="action-button export-button" id="goToExportBtn">
+                    Daten exportieren
+                </button>
             </div>
 
             <!-- Trip List Card -->
@@ -152,6 +164,7 @@
                             <option value="system">System (Automatisch)</option>
                             <option value="light">Hell</option>
                             <option value="dark">Dunkel</option>
+                            <option value="pastel">Pastel</option>
                             <option value="midnight">Mitternacht</option>
                         </select>
                     </div>
@@ -159,9 +172,17 @@
 
                 <div class="settings-section">
                     <h3>Daten exportieren</h3>
-                    <p style="color: #666; margin-bottom: 15px;">Exportiere alle Fahrten als CSV-Datei für Excel oder
-                        andere Programme.</p>
-                    <button class="action-button export-button" id="exportBtn2">Als CSV exportieren</button>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">Exportiere deine Fahrten als
+                        CSV-Datei.</p>
+
+                    <!-- ÄNDERUNG: Zwei Buttons untereinander -->
+                    <button class="action-button export-button" id="exportBtn2">
+                        Alle Fahrten (Detailliert)
+                    </button>
+
+                    <button class="action-button export-button" id="exportWeeklyBtn" style="margin-top: 10px;">
+                        Wochenbericht (Zusammenfassung)
+                    </button>
                 </div>
 
                 <div class="settings-section danger-zone">

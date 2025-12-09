@@ -214,6 +214,40 @@ class TripManager {
     }
 
     /**
+     * Berechnet die Kilometer für die aktuelle Woche (Mo - So)
+     * @returns {Object} {business: number, private: number}
+     */
+    calculateWeeklySummary() {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 = Sonntag, 1 = Montag, ...
+
+        // Wir müssen zum Montag zurückrechnen
+        // Wenn heute Sonntag (0) ist, müssen wir 6 Tage zurück.
+        // Wenn heute Montag (1) ist, müssen wir 0 Tage zurück.
+        const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
+
+        const monday = new Date(now);
+        monday.setDate(now.getDate() - distanceToMonday);
+        monday.setHours(0, 0, 0, 0); // Start des Montags
+
+        // Filtern: Alle Fahrten, die NACH oder AM Montag waren
+        const weeklyTrips = this.trips.filter(t => new Date(t.startTime) >= monday);
+
+        const businessTotal = weeklyTrips
+            .filter(t => t.type === 'business')
+            .reduce((sum, t) => sum + t.distance, 0);
+
+        const privateTotal = weeklyTrips
+            .filter(t => t.type === 'private')
+            .reduce((sum, t) => sum + t.distance, 0);
+
+        return {
+            business: businessTotal,
+            private: privateTotal
+        };
+    }
+
+    /**
      * Exportiert Fahrten als CSV
      * @returns {string} CSV-Inhalt
      */
@@ -230,6 +264,116 @@ class TripManager {
             csv += `${date},${startTime},${endTime},${type},${trip.startKm},${trip.endKm},${trip.distance},"${note}"\n`;
         });
         return csv;
+    }
+
+    /**
+     * Erstellt einen Wochen/Monatsbericht als CSV
+     * Struktur: Monatssummen und Wochensummen
+     */
+    exportWeeklyReport() {
+        if (this.trips.length === 0) return '';
+
+        // 1. Fahrten chronologisch sortieren (damit der Bericht von Alt nach Neu oder umgekehrt lesbar ist)
+        // Wir sortieren hier absteigend (neueste zuerst), wie in der Liste.
+        const sortedTrips = [...this.trips].sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+        // Datenstruktur zum Sammeln
+        const grouping = {};
+
+        // 2. Daten aggregieren
+        sortedTrips.forEach(trip => {
+            const date = new Date(trip.startTime);
+            const year = date.getFullYear();
+            const month = date.toLocaleString('de-DE', { month: 'long' });
+            const monthKey = `${year}-${date.getMonth()}`; // Zum Sortieren (z.B. 2025-11)
+
+            // Kalenderwoche berechnen
+            const weekInfo = this.getWeekNumber(date);
+            const weekKey = `${year}-W${weekInfo[1]}`;
+
+            // Monat initialisieren
+            if (!grouping[monthKey]) {
+                grouping[monthKey] = {
+                    name: month,
+                    year: year,
+                    business: 0,
+                    private: 0,
+                    weeks: {}
+                };
+            }
+
+            // Woche initialisieren
+            if (!grouping[monthKey].weeks[weekKey]) {
+                const weekRange = this.getDateRangeOfWeek(weekInfo[1], year);
+                grouping[monthKey].weeks[weekKey] = {
+                    range: weekRange,
+                    business: 0,
+                    private: 0
+                };
+            }
+
+            // Werte addieren
+            if (trip.type === 'business') {
+                grouping[monthKey].business += trip.distance;
+                grouping[monthKey].weeks[weekKey].business += trip.distance;
+            } else {
+                grouping[monthKey].private += trip.distance;
+                grouping[monthKey].weeks[weekKey].private += trip.distance;
+            }
+        });
+
+        // 3. CSV String bauen
+        let csv = 'Zeitraum,Typ,Dienstlich (km),Privat (km),Gesamt (km)\n';
+
+        // Durch die Monate iterieren
+        Object.keys(grouping).forEach(mKey => {
+            const monthData = grouping[mKey];
+            const totalMonth = monthData.business + monthData.private;
+
+            // A) MONATS-ÜBERSCHRIFT (Dient als Trenner/Summe)
+            csv += `\n"${monthData.name} ${monthData.year} (Gesamt)",Monatsabschluss,${monthData.business},${monthData.private},${totalMonth}\n`;
+
+            // B) WOCHEN-ZEILEN
+            Object.keys(monthData.weeks).forEach(wKey => {
+                const weekData = monthData.weeks[wKey];
+                const totalWeek = weekData.business + weekData.private;
+
+                csv += `"${weekData.range}",Wochensumme,${weekData.business},${weekData.private},${totalWeek}\n`;
+            });
+        });
+
+        return csv;
+    }
+
+    /**
+     * Hilfsfunktion: Gibt [Jahr, Woche] zurück
+     */
+    getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return [d.getUTCFullYear(), weekNo];
+    }
+
+    /**
+     * Hilfsfunktion: Gibt den Datumsbereich einer KW als String zurück
+     * z.B. "01.12.25 - 07.12.25"
+     */
+    getDateRangeOfWeek(w, y) {
+        var simple = new Date(y, 0, 1 + (w - 1) * 7);
+        var dow = simple.getDay();
+        var ISOweekStart = simple;
+        if (dow <= 4)
+            ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+        else
+            ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+
+        const ISOweekEnd = new Date(ISOweekStart);
+        ISOweekEnd.setDate(ISOweekStart.getDate() + 6);
+
+        const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+        return `${ISOweekStart.toLocaleDateString('de-DE', options)} - ${ISOweekEnd.toLocaleDateString('de-DE', options)}`;
     }
 
     /**
