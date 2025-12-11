@@ -466,11 +466,20 @@ h2 {
 
 /* --- 8. MODUL: ZUSAMMENFASSUNG (Hero Style) --- */
 
-/* Die große Zahl oben */
 .summary-hero {
     text-align: center;
     margin-bottom: 20px;
-    padding: 10px;
+
+    /* Box-Design hinzufügen */
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+
+    /* Etwas runder als die kleinen Boxen (12px), weil es größer ist */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+    /* Etwas mehr Innenabstand, damit es gut aussieht */
+    padding: 20px;
 }
 
 .summary-hero .label {
