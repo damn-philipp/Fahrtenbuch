@@ -209,7 +209,8 @@ class TripManager {
 
         return {
             business: businessTotal,
-            private: privateTotal
+            private: privateTotal,
+            total: businessTotal + privateTotal // NEU
         };
     }
 
@@ -219,18 +220,13 @@ class TripManager {
      */
     calculateWeeklySummary() {
         const now = new Date();
-        const currentDay = now.getDay(); // 0 = Sonntag, 1 = Montag, ...
-
-        // Wir müssen zum Montag zurückrechnen
-        // Wenn heute Sonntag (0) ist, müssen wir 6 Tage zurück.
-        // Wenn heute Montag (1) ist, müssen wir 0 Tage zurück.
+        const currentDay = now.getDay();
         const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
 
         const monday = new Date(now);
         monday.setDate(now.getDate() - distanceToMonday);
-        monday.setHours(0, 0, 0, 0); // Start des Montags
+        monday.setHours(0, 0, 0, 0);
 
-        // Filtern: Alle Fahrten, die NACH oder AM Montag waren
         const weeklyTrips = this.trips.filter(t => new Date(t.startTime) >= monday);
 
         const businessTotal = weeklyTrips
@@ -243,7 +239,8 @@ class TripManager {
 
         return {
             business: businessTotal,
-            private: privateTotal
+            private: privateTotal,
+            total: businessTotal + privateTotal // NEU
         };
     }
 

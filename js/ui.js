@@ -154,14 +154,62 @@ class UI {
     }
 
     /**
-     * Aktualisiert die Zusammenfassung
-     * @param {Object} summary - {business: number, private: number}
-     */
+         * Aktualisiert die Zusammenfassung mit Animation
+         * @param {Object} summary - {business, private, total}
+         */
     static updateSummary(summary) {
-        document.getElementById('businessKm').textContent =
-            summary.business.toLocaleString('de-DE') + ' km';
-        document.getElementById('privateKm').textContent =
-            summary.private.toLocaleString('de-DE') + ' km';
+        // Wir holen die aktuellen Werte aus dem DOM, um von dort aus zu starten
+        // (Falls 0 da steht, zählen wir von 0. Falls 100 da steht, von 100.)
+        const busElem = document.getElementById('businessKm');
+        const privElem = document.getElementById('privateKm');
+        const totElem = document.getElementById('totalKm'); // NEU
+
+        // Hilfsfunktion aufrufen
+        UI.animateValue(busElem, summary.business);
+        UI.animateValue(privElem, summary.private);
+        if (totElem) UI.animateValue(totElem, summary.total);
+    }
+
+    /**
+ * Animiert eine Zahl in einem Element
+ */
+    static animateValue(element, endValue) {
+        if (!element) return;
+
+        // Startwert aus dem Text parsen (z.B. "1.200 km" -> 1200)
+        const currentText = element.textContent.replace(/[^0-9]/g, ''); // Alles außer Zahlen entfernen
+        const startValue = parseInt(currentText) || 0; // Fallback auf 0
+
+        // Wenn kein Unterschied, nichts tun
+        if (startValue === endValue) {
+            element.textContent = endValue.toLocaleString('de-DE') + ' km';
+            return;
+        }
+
+        const duration = 500; // Animation dauert 500ms (0.5 sek)
+        const startTime = performance.now();
+
+        const updateNumber = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1); // Fortschritt 0 bis 1
+
+            // Easing (optional: macht es weicher) - EaseOutQuad
+            const ease = 1 - (1 - progress) * (1 - progress);
+
+            // Aktuellen Zwischenwert berechnen
+            const current = Math.floor(startValue + (endValue - startValue) * ease);
+
+            element.textContent = current.toLocaleString('de-DE') + ' km';
+
+            if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+            } else {
+                // Sicherstellen, dass am Ende der exakte Wert steht
+                element.textContent = endValue.toLocaleString('de-DE') + ' km';
+            }
+        };
+
+        requestAnimationFrame(updateNumber);
     }
 
     /**

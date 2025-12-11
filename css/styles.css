@@ -9,6 +9,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+    /* Entfernt das graue Aufblitzen bei iOS */
+
+    /* NEU: Verhindert, dass man den Text "Dienstlich" aus Versehen markiert */
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 body {
@@ -457,14 +464,17 @@ h2 {
 /* --- 8. MODUL: ZUSAMMENFASSUNG --- */
 .summary {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    /* ÄNDERUNG: 3 gleich große Spalten statt 2 */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    /* Gap etwas verkleinern, damit 3 Spalten auf Handy passen */
     margin-bottom: 20px;
 }
 
 .summary-item {
     text-align: center;
-    padding: 20px;
+    padding: 15px 5px;
+    /* Padding links/rechts verringern für mehr Platz */
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
@@ -477,8 +487,10 @@ h2 {
     margin-bottom: 5px;
 }
 
+/* Optional: Die Schriftgröße der Zahl etwas dynamischer machen */
 .summary-item .value {
-    font-size: 28px;
+    font-size: 24px;
+    /* Etwas kleiner als vorher (28px), damit "1.000 km" reinpasst */
     font-weight: bold;
     color: var(--primary-color);
 }
