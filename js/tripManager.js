@@ -245,6 +245,35 @@ class TripManager {
     }
 
     /**
+     * Berechnet die Kilometer für den aktuellen Monat
+     */
+    calculateMonthlySummary() {
+        const now = new Date();
+        const currentMonth = now.getMonth(); // 0-11
+        const currentYear = now.getFullYear();
+
+        // Filter: Jahr und Monat müssen übereinstimmen
+        const monthlyTrips = this.trips.filter(t => {
+            const d = new Date(t.startTime);
+            return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        });
+
+        const businessTotal = monthlyTrips
+            .filter(t => t.type === 'business')
+            .reduce((sum, t) => sum + t.distance, 0);
+
+        const privateTotal = monthlyTrips
+            .filter(t => t.type === 'private')
+            .reduce((sum, t) => sum + t.distance, 0);
+
+        return {
+            business: businessTotal,
+            private: privateTotal,
+            total: businessTotal + privateTotal
+        };
+    }
+
+    /**
      * Exportiert Fahrten als CSV
      * @returns {string} CSV-Inhalt
      */

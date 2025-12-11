@@ -109,14 +109,22 @@
             <div id="summaryCard" class="card hidden">
                 <h2>Übersicht</h2>
 
-                <!-- NEU: Umschalter Woche / Gesamt -->
-                <div class="trip-type summary-toggle" style="margin-bottom: 20px;">
-                    <button id="summaryWeekBtn" class="active">Diese Woche</button>
+                <!-- 1. Slider mit 3 Optionen -->
+                <div class="trip-type summary-toggle" style="margin-bottom: 25px;">
+                    <button id="summaryWeekBtn" class="active">Woche</button>
+                    <button id="summaryMonthBtn">Monat</button> <!-- NEU -->
                     <button id="summaryTotalBtn">Gesamt</button>
                     <div class="glider"></div>
                 </div>
 
-                <div class="summary">
+                <!-- 2. Großes "Hero" Display für Gesamt -->
+                <div class="summary-hero">
+                    <div class="label" id="summaryTitleLabel">Gesamtstrecke</div>
+                    <div class="value" id="totalKm">0 km</div>
+                </div>
+
+                <!-- 3. Aufteilung Dienstlich / Privat -->
+                <div class="summary-split">
                     <div class="summary-item">
                         <div class="label">Dienstlich</div>
                         <div class="value" id="businessKm">0 km</div>
@@ -125,15 +133,9 @@
                         <div class="label">Privat</div>
                         <div class="value" id="privateKm">0 km</div>
                     </div>
-                    <!-- NEU: Dritte Box -->
-                    <div class="summary-item">
-                        <div class="label">Gesamt</div>
-                        <div class="value" id="totalKm">0 km</div>
-                    </div>
                 </div>
 
-                <!-- ÄNDERUNG: Neuer Text & ID für den Button -->
-                <button class="action-button export-button" id="goToExportBtn">
+                <button class="action-button export-button" id="goToExportBtn" style="margin-top: 20px;">
                     Daten exportieren
                 </button>
             </div>

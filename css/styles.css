@@ -461,37 +461,57 @@ h2 {
     min-width: 44px;
 }
 
-/* --- 8. MODUL: ZUSAMMENFASSUNG --- */
-.summary {
-    display: grid;
-    /* ÄNDERUNG: 3 gleich große Spalten statt 2 */
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    /* Gap etwas verkleinern, damit 3 Spalten auf Handy passen */
+/* --- 8. MODUL: ZUSAMMENFASSUNG (Hero Style) --- */
+
+/* Die große Zahl oben */
+.summary-hero {
+    text-align: center;
     margin-bottom: 20px;
+    padding: 10px;
+}
+
+.summary-hero .label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.summary-hero .value {
+    font-size: 20px;
+    /* Extra Groß */
+    font-weight: 700;
+    /* Extra Fett */
+    /* Wir nehmen die Textfarbe, damit es neutral wirkt, 
+       oder primary-color wenn es knallen soll */
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+/* Die zwei Boxen darunter */
+.summary-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
 .summary-item {
     text-align: center;
-    padding: 15px 5px;
-    /* Padding links/rechts verringern für mehr Platz */
+    padding: 15px;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .summary-item .label {
     color: var(--text-secondary);
-    font-size: 14px;
-    margin-bottom: 5px;
+    font-size: 13px;
+    margin-bottom: 4px;
 }
 
-/* Optional: Die Schriftgröße der Zahl etwas dynamischer machen */
 .summary-item .value {
-    font-size: 24px;
-    /* Etwas kleiner als vorher (28px), damit "1.000 km" reinpasst */
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 700;
     color: var(--primary-color);
 }
 
@@ -595,6 +615,40 @@ h2 {
     padding: 15px;
     border-radius: 12px;
     border: 1px solid var(--danger-color);
+}
+
+/* ========================================
+   SUMMARY TOGGLE (3-Wege Slider)
+   ======================================== */
+
+/* Der Glider muss jetzt ein Drittel (33.33%) breit sein */
+.summary-toggle .glider {
+    width: calc(33.333% - 4px);
+    /* Ein Drittel minus Abstand */
+    background-color: var(--seg-active-bg);
+    box-shadow: var(--seg-shadow);
+}
+
+/* Position 1: Woche (Links) */
+.summary-toggle button:nth-of-type(1).active~.glider {
+    transform: translateX(0%);
+}
+
+/* Position 2: Monat (Mitte) */
+/* 100% Verschiebung bezieht sich auf die Breite des Gliders (ein Drittel). 
+   Also schieben wir ihn genau um seine eigene Breite weiter. */
+.summary-toggle button:nth-of-type(2).active~.glider {
+    transform: translateX(100%);
+}
+
+/* Position 3: Gesamt (Rechts) */
+.summary-toggle button:nth-of-type(3).active~.glider {
+    transform: translateX(200%);
+}
+
+/* Textfarbe aktiv */
+.summary-toggle button.active {
+    color: var(--text-main) !important;
 }
 
 /* ========================================

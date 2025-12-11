@@ -57,18 +57,30 @@ function attachEventListeners() {
     document.getElementById('endTripBtn').addEventListener('click', handleEndTrip);
 
     // --- 3. HAUPTSEITE: ÜBERSICHT (SUMMARY) ---
-    document.getElementById('summaryWeekBtn').addEventListener('click', () => {
-        summaryMode = 'week';
-        document.getElementById('summaryWeekBtn').classList.add('active');
-        document.getElementById('summaryTotalBtn').classList.remove('active');
+    const sumWeekBtn = document.getElementById('summaryWeekBtn');
+    const sumMonthBtn = document.getElementById('summaryMonthBtn');
+    const sumTotalBtn = document.getElementById('summaryTotalBtn');
+
+    // Helper um Klassen zu setzen
+    const setSummaryActive = (btn) => {
+        [sumWeekBtn, sumMonthBtn, sumTotalBtn].forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         updateSummaryDisplay();
+    };
+
+    sumWeekBtn.addEventListener('click', () => {
+        summaryMode = 'week';
+        setSummaryActive(sumWeekBtn);
     });
 
-    document.getElementById('summaryTotalBtn').addEventListener('click', () => {
+    sumMonthBtn.addEventListener('click', () => {
+        summaryMode = 'month'; // NEU
+        setSummaryActive(sumMonthBtn);
+    });
+
+    sumTotalBtn.addEventListener('click', () => {
         summaryMode = 'total';
-        document.getElementById('summaryTotalBtn').classList.add('active');
-        document.getElementById('summaryWeekBtn').classList.remove('active');
-        updateSummaryDisplay();
+        setSummaryActive(sumTotalBtn);
     });
 
     // Button auf der Startseite: Leitet zu den Einstellungen weiter
@@ -278,15 +290,28 @@ function handleResetApp() {
     }
 }
 
-// Hilfsfunktion: Berechnet Zusammenfassung je nach Modus (Woche/Gesamt)
+// Hilfsfunktion: Berechnet Zusammenfassung je nach Modus
 function updateSummaryDisplay() {
     let data;
+    let titleText = "Gesamtstrecke"; // Standard Titel
+
     if (summaryMode === 'week') {
         data = tripManager.calculateWeeklySummary();
+        titleText = "Diese Woche";
+    } else if (summaryMode === 'month') { // NEU
+        data = tripManager.calculateMonthlySummary();
+        // Monatsname ermitteln (z.B. "Dezember")
+        const monthName = new Date().toLocaleString('de-DE', { month: 'long' });
+        titleText = "Dieser Monat (" + monthName + ")";
     } else {
         data = tripManager.calculateSummary();
+        titleText = "Gesamtstrecke";
     }
-    // WICHTIG: Aufruf der UI Klasse, nicht sich selbst!
+
+    // Label aktualisieren (damit man weiß, was die große Zahl bedeutet)
+    const label = document.getElementById('summaryTitleLabel');
+    if (label) label.textContent = titleText;
+
     UI.updateSummary(data);
 }
 
