@@ -27,11 +27,15 @@ function initializeApp() {
         UI.showSetupCard(false);
         UI.updateKmDisplay(tripManager.currentKmStand);
 
+        // Einstellungen in UI laden
+        UI.setSettingsValues(tripManager.privatePrice, tripManager.startDate);
+
         // Liste rendern (mit Limit)
         UI.renderTripList(tripManager.trips, currentListLimit);
 
         // Übersicht aktualisieren
         updateSummaryDisplay();
+        updatePrivateAnalysisDisplay();
 
         if (state.hasActiveTrip) {
             UI.showActiveTrip(tripManager.activeTrip);
@@ -120,6 +124,9 @@ function attachEventListeners() {
     const weeklyBtn = document.getElementById('exportWeeklyBtn');
     if (weeklyBtn) weeklyBtn.addEventListener('click', handleWeeklyExport); // Wochenbericht
 
+    // Privatnutzung-Einstellungen
+    document.getElementById('savePrivateSettingsBtn').addEventListener('click', handleSavePrivateSettings);
+
     // Gefahrenzone
     document.getElementById('clearTripsBtn').addEventListener('click', handleClearAllTrips);
     document.getElementById('resetAppBtn').addEventListener('click', handleResetApp);
@@ -190,6 +197,7 @@ function handleEndTrip() {
     UI.renderTripList(tripManager.trips, currentListLimit);
 
     updateSummaryDisplay();
+    updatePrivateAnalysisDisplay();
     UI.clearInput('endKm');
 }
 
@@ -212,6 +220,7 @@ function handleSaveEdit() {
         UI.closeEditModal();
         UI.renderTripList(tripManager.trips, currentListLimit);
         updateSummaryDisplay();
+        updatePrivateAnalysisDisplay();
         editingTripId = null;
     } else {
         UI.alert('Bitte überprüfe deine Eingaben. End-KM muss höher sein als Start-KM.');
@@ -227,6 +236,7 @@ function handleModalDeleteTrip() {
         if (success) {
             UI.renderTripList(tripManager.trips, currentListLimit);
             updateSummaryDisplay();
+            updatePrivateAnalysisDisplay();
             UI.closeEditModal();
             editingTripId = null;
         } else {
@@ -269,6 +279,20 @@ function handleUpdateKm() {
     }
 }
 
+function handleSavePrivateSettings() {
+    const price = parseFloat(document.getElementById('privatePrice').value);
+    const date = document.getElementById('startDate').value;
+
+    if (isNaN(price) || !date) {
+        UI.alert('Bitte gib einen gültigen Preis und ein Startdatum ein.');
+        return;
+    }
+
+    tripManager.updatePrivateSettings(price, date);
+    updatePrivateAnalysisDisplay();
+    UI.alert('Einstellungen gespeichert!');
+}
+
 function handleClearAllTrips() {
     if (UI.confirm('Wirklich ALLE Fahrten löschen?')) {
         if (UI.confirm('Sicher? Daten gehen verloren!')) {
@@ -276,6 +300,7 @@ function handleClearAllTrips() {
             currentListLimit = 10;
             UI.renderTripList(tripManager.trips, currentListLimit);
             updateSummaryDisplay(); // Update auf 0
+            updatePrivateAnalysisDisplay();
             UI.alert('Alle Fahrten gelöscht.');
         }
     }
@@ -312,7 +337,24 @@ function updateSummaryDisplay() {
     const label = document.getElementById('summaryTitleLabel');
     if (label) label.textContent = titleText;
 
+    // Analyse-Anzeige steuern
+    const analysisDiv = document.getElementById('privateAnalysis');
+    if (analysisDiv) {
+        if (summaryMode === 'total') {
+            analysisDiv.classList.add('active');
+            analysisDiv.classList.remove('hidden'); // Fallback entfernen
+        } else {
+            analysisDiv.classList.remove('active');
+        }
+    }
+
     UI.updateSummary(data);
+}
+
+// Hilfsfunktion: Aktualisiert die Privatnutzung-Analyse
+function updatePrivateAnalysisDisplay() {
+    const analysis = tripManager.calculatePrivateCostAnalysis();
+    UI.updatePrivateAnalysis(analysis);
 }
 
 /**

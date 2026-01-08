@@ -10,6 +10,8 @@ class TripManager {
         this.activeTrip = null;
         this.trips = [];
         this.selectedType = 'business';
+        this.privatePrice = 251.00;
+        this.startDate = '2025-12-01';
     }
 
     /**
@@ -20,6 +22,8 @@ class TripManager {
         const savedKm = Storage.getCurrentKm();
         const savedTrips = Storage.getTrips();
         const savedActiveTrip = Storage.getActiveTrip();
+        this.privatePrice = Storage.getPrivatePrice();
+        this.startDate = Storage.getStartDate();
 
         if (savedKm !== null) {
             this.currentKmStand = savedKm;
@@ -408,6 +412,69 @@ class TripManager {
     clearAllTrips() {
         this.trips = [];
         Storage.clearAllTrips();
+    }
+
+    /**
+     * Berechnet die Kosten pro Privat-KM
+     * @returns {Object} { costPerKm: number, totalPrivateKm: number, totalCost: number }
+     */
+    calculatePrivateCostAnalysis() {
+        const start = new Date(this.startDate);
+        const now = new Date();
+
+        // Gesamtkosten = (Volle Monate vor dem aktuellen Monat) * Preis + (Anteil aktueller Monat) * Preis
+        let totalCost = 0;
+        if (now >= start) {
+            // Wenn Start und Jetzt im gleichen Monat/Jahr
+            if (now.getFullYear() === start.getFullYear() && now.getMonth() === start.getMonth()) {
+                const daysInStartMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
+                const activeDays = now.getDate() - start.getDate() + 1;
+                totalCost = (activeDays / daysInStartMonth) * this.privatePrice;
+            } else {
+                // Erster Monat anteilig
+                const daysInStartMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
+                const firstMonthDays = daysInStartMonth - start.getDate() + 1;
+                totalCost += (firstMonthDays / daysInStartMonth) * this.privatePrice;
+
+                // Volle Monate dazwischen
+                let tempDate = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+                while (tempDate.getFullYear() < now.getFullYear() || (tempDate.getFullYear() === now.getFullYear() && tempDate.getMonth() < now.getMonth())) {
+                    totalCost += this.privatePrice;
+                    tempDate.setMonth(tempDate.getMonth() + 1);
+                }
+
+                // Aktueller Monat anteilig
+                const daysInCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const currentDay = now.getDate();
+                totalCost += (currentDay / daysInCurrentMonth) * this.privatePrice;
+            }
+        }
+
+        const privateTripsSinceStart = this.trips.filter(t => {
+            const tripDate = new Date(t.startTime);
+            return tripDate >= start;
+        });
+
+        const totalPrivateKm = privateTripsSinceStart.reduce((sum, t) => sum + t.distance, 0);
+        const costPerKm = totalPrivateKm > 0 ? totalCost / totalPrivateKm : 0;
+
+        return {
+            costPerKm: costPerKm,
+            totalPrivateKm: totalPrivateKm,
+            totalCost: totalCost
+        };
+    }
+
+    /**
+     * Aktualisiert die Einstellungen für die Privatnutzung
+     * @param {number} price 
+     * @param {string} date 
+     */
+    updatePrivateSettings(price, date) {
+        this.privatePrice = price;
+        this.startDate = date;
+        Storage.savePrivatePrice(price);
+        Storage.saveStartDate(date);
     }
 
     /**

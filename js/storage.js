@@ -9,8 +9,44 @@ class Storage {
     static KEYS = {
         CURRENT_KM: 'currentKm',
         TRIPS: 'trips',
-        ACTIVE_TRIP: 'activeTrip'
+        ACTIVE_TRIP: 'activeTrip',
+        PRIVATE_PRICE: 'privatePrice',
+        START_DATE: 'startDate'
     };
+
+    /**
+     * Lädt den Preis für die Privatnutzung
+     * @returns {number}
+     */
+    static getPrivatePrice() {
+        const price = localStorage.getItem(this.KEYS.PRIVATE_PRICE);
+        return price ? parseFloat(price) : 251.00;
+    }
+
+    /**
+     * Speichert den Preis für die Privatnutzung
+     * @param {number} price
+     */
+    static savePrivatePrice(price) {
+        localStorage.setItem(this.KEYS.PRIVATE_PRICE, price.toString());
+    }
+
+    /**
+     * Lädt das Startdatum
+     * @returns {string}
+     */
+    static getStartDate() {
+        const date = localStorage.getItem(this.KEYS.START_DATE);
+        return date || '2025-12-01';
+    }
+
+    /**
+     * Speichert das Startdatum
+     * @param {string} date
+     */
+    static saveStartDate(date) {
+        localStorage.setItem(this.KEYS.START_DATE, date);
+    }
 
     /**
      * Lädt den aktuellen KM-Stand

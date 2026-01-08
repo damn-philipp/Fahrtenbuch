@@ -14,17 +14,20 @@ class UI {
         const mainCard = document.getElementById('mainCard');
         const summaryCard = document.getElementById('summaryCard');
         const tripListCard = document.getElementById('tripListCard');
+        const privateCostCard = document.getElementById('privateCostCard');
 
         if (show) {
             setupCard.classList.remove('hidden');
             mainCard.classList.add('hidden');
             summaryCard.classList.add('hidden');
             tripListCard.classList.add('hidden');
+            if (privateCostCard) privateCostCard.classList.add('hidden');
         } else {
             setupCard.classList.add('hidden');
             mainCard.classList.remove('hidden');
             summaryCard.classList.remove('hidden');
             tripListCard.classList.remove('hidden');
+            if (privateCostCard) privateCostCard.classList.remove('hidden');
         }
     }
 
@@ -168,6 +171,47 @@ class UI {
         UI.animateValue(busElem, summary.business);
         UI.animateValue(privElem, summary.private);
         if (totElem) UI.animateValue(totElem, summary.total);
+    }
+
+    /**
+     * Aktualisiert die Privatnutzung-Analyse
+     * @param {Object} analysis - {costPerKm, totalPrivateKm, totalCost}
+     */
+    static updatePrivateAnalysis(analysis) {
+        const costPerKmElem = document.getElementById('costPerKm');
+        const totalPrivateKmElem = document.getElementById('totalPrivateKmSinceStart');
+        const totalPrivateCostElem = document.getElementById('totalPrivateCost');
+
+        if (costPerKmElem) {
+            costPerKmElem.textContent = analysis.costPerKm.toLocaleString('de-DE', {
+                style: 'currency',
+                currency: 'EUR'
+            });
+        }
+
+        if (totalPrivateKmElem) {
+            UI.animateValue(totalPrivateKmElem, analysis.totalPrivateKm);
+        }
+
+        if (totalPrivateCostElem) {
+            totalPrivateCostElem.textContent = analysis.totalCost.toLocaleString('de-DE', {
+                style: 'currency',
+                currency: 'EUR'
+            });
+        }
+    }
+
+    /**
+     * Setzt die Werte in den Einstellungen
+     * @param {number} price
+     * @param {string} date
+     */
+    static setSettingsValues(price, date) {
+        const priceInput = document.getElementById('privatePrice');
+        const dateInput = document.getElementById('startDate');
+
+        if (priceInput) priceInput.value = price;
+        if (dateInput) dateInput.value = date;
     }
 
     /**
