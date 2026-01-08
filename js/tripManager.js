@@ -452,7 +452,7 @@ class TripManager {
 
         const privateTripsSinceStart = this.trips.filter(t => {
             const tripDate = new Date(t.startTime);
-            return tripDate >= start;
+            return tripDate >= start && t.type === 'private';
         });
 
         const totalPrivateKm = privateTripsSinceStart.reduce((sum, t) => sum + t.distance, 0);
